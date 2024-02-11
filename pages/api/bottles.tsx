@@ -1,3 +1,4 @@
+import { NextApiResponse, NextApiRequest} from 'next';
 import prisma from '../../lib/prismadb';
 import { getSession } from "next-auth/react"
 
@@ -24,11 +25,11 @@ async function handleGET(res: NextApiResponse, req: NextApiRequest) {
 
 
   console.log("made it to the pull bottles get");
-  console.log("userid to fetch bottles for: ", session?.user?.id ?? null);
+  // console.log("userid to fetch bottles for: ", session?.user?.id ?? null);
   const bottles = await prisma.bottle.findMany(
-    {
-      where: { userId: session?.user?.id ?? null }
-    }
+    // {
+    //   where: { userId: session?.user?.id ?? null }
+    // }
   );
   res.json(bottles);
 }

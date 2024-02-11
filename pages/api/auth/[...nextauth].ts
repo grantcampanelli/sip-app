@@ -108,9 +108,9 @@ export const authOptions = {
 
   
 
-  session: {
-    strategy: "jwt",
-  },
+  // session: {
+  //   strategy: "jwt",
+  // },
   callbacks: {
     session: ({ session, token }: { session: any, token: any }) => ({
       ...session,

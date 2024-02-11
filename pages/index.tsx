@@ -13,24 +13,24 @@ export default function Page() {
         <h3>Know what you&apos;re sippin&apos;</h3>
       </div>
         <div>
-          <a
+          <link
             className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
             href="/bottles"
             rel="noopener noreferrer"
           >
             Bottles
-          </a>  <a> | </a>
-          <a
+          </link>   | 
+          <link
             className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
             href="/wines"
             rel="noopener noreferrer"
           >
             Wines
-          </a>
-          <a> | </a>
-          <a className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
+          </link>
+           | 
+          <link className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
             href="/wineries"
-            rel="noopener noreferrer">Wineries</a>
+            rel="noopener noreferrer">Wineries</link>
       </div>
 
       

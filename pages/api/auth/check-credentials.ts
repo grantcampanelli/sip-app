@@ -31,7 +31,7 @@ const hashPassword = (password: string) => {
 };
 
 // POST /api/user
-async function handlePOST(res, req) {
+async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   console.log("made it to the check credentials post");
 type UserSelect = {
     id?: boolean;

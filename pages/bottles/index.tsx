@@ -37,7 +37,7 @@ const BottlePage: React.FC = () => {
             <h1>Bottle Page</h1>
             <ul className="bottle-list">
                 {bottles.map((bottle) => (
-                    <li key={bottle.id as Key} className="bottle-item">
+                    <li  className="bottle-item">
                         <p>Price: {bottle.price}</p>
                         <p>Size: {bottle.size} </p>
                     </li>
