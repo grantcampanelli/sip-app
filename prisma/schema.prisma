@@ -8,25 +8,41 @@ datasource db {
   // shadowDatabaseUrl = env("SHADOW_DATABASE_UR L") // Only needed when using a cloud provider that doesn't support the creation of new databases, like Heroku. Learn more: https://pris.ly/migrate-shadow
 }
 
-model Wine {
+// model Wine {
+//   id       String   @id @default(cuid())
+//   name     String
+//   vintage  String
+//   varietal String
+//   wineryId String
+//   bottles  Bottle[]
+//   winery   Winery   @relation(fields: [wineryId], references: [id])
+// }
+
+// model Winery {
+//   id    String @id @default(cuid())
+//   name  String
+//   wines Wine[]
+// }
+
+model Product {
   id       String   @id @default(cuid())
   name     String
   vintage  String
   varietal String
-  wineryId String
+  brandId String
   bottles  Bottle[]
-  winery   Winery   @relation(fields: [wineryId], references: [id])
+  brand   Brand   @relation(fields: [brandId], references: [id])
 }
 
-model Winery {
+model Brand {
   id    String @id @default(cuid())
   name  String
-  wines Wine[]
+  products Product[]
 }
 
 model Bottle {
   id           String   @id @default(cuid())
-  wineId       String
+  productId       String
   size         String
   price        Float
   purchaseDate DateTime
@@ -34,7 +50,7 @@ model Bottle {
   notes        String
   userId       String
   user         User     @relation(fields: [userId], references: [id])
-  wine         Wine     @relation(fields: [wineId], references: [id])
+  product         Product     @relation(fields: [productId], references: [id])
 }
 
 
