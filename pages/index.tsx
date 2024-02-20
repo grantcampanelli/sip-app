@@ -14,7 +14,14 @@ export default function Page() {
   }
   return (
     <div className='container'>
-        <p>Not signed in</p>
+
+                        <Image
+      src="/SipLogo.png"
+      width={500}
+      height={500}
+      alt="Sip Logo"
+    />
+
     </div>
   )
 }
