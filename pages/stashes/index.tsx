@@ -13,16 +13,18 @@ export default function Page() {
   }
 
   //fetch wines from the database
-  async function getWineries(): Promise<void> {
+  async function getStorages(): Promise<void> {
     "use server";
-    const fetchedWineries = await fetch("/api/wineries"); // replace with your API endpoint
-    const wineriesData = await fetchedWineries.json();
+    const fetchedStorages = await fetch("/api/storages"); // replace with your API endpoint
+    const storagesData = await fetchedStorages.json();
   }
   console.log(session, status);
   return (
     <>
-      <h1>Protected Page</h1>
-      <p>You can view this page because you are signed in.</p>
+      <div className="container mx-auto px-4">
+        <h3>Your stashes</h3>
+        <button>Add New Stash</button>
+      </div>
 
       <p></p>
     </>
