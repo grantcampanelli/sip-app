@@ -1,5 +1,5 @@
 // NEXTAUTH
-import NextAuth from 'next-auth'
+import NextAuth, {NextAuthOptions} from 'next-auth'
 import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from "next-auth/providers/credentials"
@@ -10,7 +10,7 @@ import prisma from '../../../lib/prismadb'
 
 // `````````````````````````````````````````````````````
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   // SECRET
   secret: process.env.SECRET,
 
@@ -86,7 +86,7 @@ export const authOptions = {
   adapter: PrismaAdapter(prisma),
 
   // * DATABASE URL FOR NEXT-AUTH
-  database: process.env.DATABASE_URL,
+  //database: process.env.DATABASE_URL,
 
 
   // callbacks for nextjs nextauth session and jwt
@@ -125,4 +125,5 @@ export const authOptions = {
 
 // const handler = NextAuth(authOptions)
 // export {handler as GET, handler as POST}
+
 export default NextAuth(authOptions)
