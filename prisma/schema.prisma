@@ -8,51 +8,67 @@ datasource db {
   // shadowDatabaseUrl = env("SHADOW_DATABASE_UR L") // Only needed when using a cloud provider that doesn't support the creation of new databases, like Heroku. Learn more: https://pris.ly/migrate-shadow
 }
 
-// model Wine {
-//   id       String   @id @default(cuid())
-//   name     String
-//   vintage  String
-//   varietal String
-//   wineryId String
-//   bottles  Bottle[]
-//   winery   Winery   @relation(fields: [wineryId], references: [id])
-// }
-
-// model Winery {
-//   id    String @id @default(cuid())
-//   name  String
-//   wines Wine[]
-// }
-
 model Product {
   id       String   @id @default(cuid())
   name     String
   vintage  String
   varietal String
-  brandId String
+  brandId  String
   bottles  Bottle[]
-  brand   Brand   @relation(fields: [brandId], references: [id])
+  brand    Brand    @relation(fields: [brandId], references: [id])
 }
 
 model Brand {
-  id    String @id @default(cuid())
-  name  String
+  id       String    @id @default(cuid())
+  name     String
   products Product[]
 }
 
 model Bottle {
-  id           String   @id @default(cuid())
+  id              String     @id @default(cuid())
+  size            Float?
+  servingSize     Float
+  purchasePrice   Float
+  purchaseDate    DateTime
+  openDate        DateTime
+  finishDate      DateTime
+  amountRemaining Float
+  notes           String
+  userId          String
+  user            User       @relation(fields: [userId], references: [id])
   productId       String
-  size         String
-  price        Float
-  purchaseDate DateTime
-  drinkDate    DateTime
-  notes        String
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  product         Product     @relation(fields: [productId], references: [id])
+  product         Product    @relation(fields: [productId], references: [id])
+  shelfItem       ShelfItem?
 }
 
+model Stash {
+  id       String  @id @default(cuid())
+  name     String
+  location String
+  type     String
+  userId   String
+  user     User    @relation(fields: [userId], references: [id])
+  shelves  Shelf[]
+}
+
+model Shelf {
+  id         String      @id @default(cuid())
+  name       String
+  capacity   Int
+  stashId    String?
+  temp       Float
+  stash      Stash?      @relation(fields: [stashId], references: [id], onDelete: Cascade)
+  shelfItems ShelfItem[]
+}
+
+model ShelfItem {
+  id       String @id @default(cuid())
+  order    Int
+  bottleId String @unique
+  shelfId  String @unique
+  bottle   Bottle @relation(fields: [bottleId], references: [id], onDelete: Cascade)
+  shelf    Shelf  @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+}
 
 model Account {
   id                String  @id @default(cuid())
@@ -91,6 +107,7 @@ model User {
   accounts      Account[]
   bottles       Bottle[]
   sessions      Session[]
+  stash         Stash[]
 }
 
 model VerificationToken {

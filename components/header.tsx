@@ -24,10 +24,10 @@ const Header = () => {
           </div>
           <div className="flex items-center">
             <a
-              href="/wineries"
+              href="/stashes"
               className="ml-8 text-gray-900 hover:text-gray-900"
             >
-              Wineries
+              Stashes
             </a>
             <a className="ml-8 text-gray-900 hover:text-gray-900">
               <button onClick={() => signOut()}>Sign Out</button>
