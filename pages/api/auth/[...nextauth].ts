@@ -113,6 +113,14 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
+    async jwt({ token, user }) {
+      /* Step 1: update the token based on the user object */
+      // if (user) {
+      //   token.role = user.role;
+      //   token.subscribed = user.subscribed;
+      // }
+      return token;
+    },
     session: ({ session, token }: { session: any, token: any }) => ({
       ...session,
       user: {
