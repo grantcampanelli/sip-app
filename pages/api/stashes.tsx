@@ -23,7 +23,7 @@ async function handleGET(res: NextApiResponse, req: NextApiRequest) {
 
   console.log("made it to the pull bottles get");
   // console.log("userid to fetch bottles for: ", session?.user?.id ?? null);
-  const stashes = await prisma.storage.findMany({
+  const stashes = await prisma.stash.findMany({
     where: { userId: "clsdgpzsw00003ng9sazcvs1f" },
   });
   console.log("stashes: ", stashes);
