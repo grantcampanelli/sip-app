@@ -1,4 +1,6 @@
+import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getSession, useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 import type { Stash } from "@prisma/client";
 import type { Session } from "inspector";
 import { GetServerSideProps } from "next";
@@ -6,7 +8,8 @@ import prisma from "../../lib/prismadb";
 // import type { Stash } from "@prisma/client";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+  //   const session = await getSession({ req });
 
   if (!session) {
     res.statusCode = 403;
