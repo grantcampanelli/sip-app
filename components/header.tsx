@@ -9,6 +9,9 @@ const SignedIn = () => {
     return (
       <>
         <div className="flex items-center">
+          <a href="/bottles" className="ml-8 text-gray-900 hover:text-gray-900">
+            Bottles
+          </a>
           <a href="/stashes" className="ml-8 text-gray-900 hover:text-gray-900">
             Stashes
           </a>
