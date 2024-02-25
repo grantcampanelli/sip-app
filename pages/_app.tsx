@@ -2,7 +2,6 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import Header from "../components/header";
-// import "tailwindcss/tailwind.css";
 import "@mantine/core/styles.css";
 
 // * NEXTAUTH - import SessionProvider

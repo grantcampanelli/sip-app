@@ -59,7 +59,7 @@ const Stashes: React.FC<Props> = (props) => {
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
             onClick={() => {
-              const modal = document.getElementById("my_modal_5");
+              const modal = document.getElementById("my_modal_5") as HTMLDialogElement;
               if (modal) {
                 modal.showModal();
               }
