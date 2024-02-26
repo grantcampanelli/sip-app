@@ -14,18 +14,23 @@ import {
 import { useForm } from "@mantine/form";
 import type { Stash } from "@prisma/client";
 
-const CreateStashForm: React.FC = () => {
+const CurrentStashId = "1234";
+
+const CreateShelfForm: React.FC = () => {
   const form = useForm({
     initialValues: {
       name: "",
-      location: "",
-      type: "fridge",
+      order: "",
+      capacity: 0,
+      temp: 0.0,
+      stashId: "",
     },
     // validate: {
     //   email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
     // },
   });
 
+  // console.log("queryId: ", Router.query.id);
   const submitData = async (e: React.SyntheticEvent) => {
     console.log("submitData function");
 
@@ -35,16 +40,19 @@ const CreateStashForm: React.FC = () => {
       console.log("form.values: ", form.values);
       const body = {
         name: form.values.name,
-        location: form.values.location,
-        type: form.values.type,
+        order: form.values.order,
+        capacity: form.values.capacity,
+        temp: form.values.temp,
+        stashId: "1234",
       };
       console.log("body: ", body);
-      await fetch("/api/stashes", {
+      await fetch("/api/shelves", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      await Router.push("/stashes");
+      // need to return back to right fridge page
+      //   await Router.push("/shelves");
       console.log("submitData function");
     } catch (error) {
       console.error(error);
@@ -85,4 +93,4 @@ const CreateStashForm: React.FC = () => {
   );
 };
 
-export default CreateStashForm;
+export default CreateShelfForm;

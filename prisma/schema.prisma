@@ -54,6 +54,7 @@ model Stash {
 model Shelf {
   id         String      @id @default(cuid())
   name       String
+  order      Int?
   capacity   Int
   stashId    String?
   temp       Float
