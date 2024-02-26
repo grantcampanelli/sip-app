@@ -1,88 +1,84 @@
 import React, { useState } from "react";
 // import Layout from "../components/Layout";
 import Router from "next/router";
+import {
+  Container,
+  Button,
+  Input,
+  Textarea,
+  Box,
+  TextInput,
+  NumberInput,
+  Checkbox,
+  Group,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import type { Stash } from "@prisma/client";
 
 const submitData = async (e: React.SyntheticEvent) => {
   e.preventDefault();
   try {
     // const body = { title, content };
-    const body = "title, content";
-    await fetch("/api/post", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    await Router.push("/drafts");
+    // const body = "title, content";
+    // await fetch("/api/post", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(body),
+    // });
+    // await Router.push("/drafts");
+    console.log("submitData function");
   } catch (error) {
     console.error(error);
   }
 };
 
-const Draft: React.FC = () => {
+const CreateStashForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const form = useForm({
+    initialValues: {
+      email: "",
+      termsOfService: false,
+    },
 
-  const submitData = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    // TODO
-    // You will implement this next ...
-  };
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+    },
+  });
 
   return (
-    <>
-      <div>
-        <form onSubmit={submitData}>
-          <h1>New Draft</h1>
-          <input
-            autoFocus
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title"
-            type="text"
-            value={title}
+    <Container>
+      <h1>Create Stash</h1>
+      <Box maw={340} mx="auto">
+        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+          <TextInput
+            withAsterisk
+            label="Name"
+            placeholder="Red Wine Fridge"
+            {...form.getInputProps("name")}
           />
-          <textarea
-            cols={50}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Content"
-            rows={8}
-            value={content}
+          <TextInput
+            withAsterisk
+            label="Location"
+            placeholder="Kitchen"
+            {...form.getInputProps("location")}
           />
-          <input disabled={!content || !title} type="submit" value="Create" />
-          <a className="back" href="#" onClick={() => Router.push("/")}>
-            or Cancel
-          </a>
+
+          <NumberInput
+            withAsterisk
+            label="Number of Shelves"
+            placeholder="6"
+            {...form.getInputProps("temperature")}
+          />
+          <Group justify="flex-end" mt="md">
+            <Button type="submit" onClick={submitData}>
+              Submit
+            </Button>
+          </Group>
         </form>
-      </div>
-      <style jsx>{`
-        .page {
-          background: var(--geist-background);
-          padding: 3rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        input[type="text"],
-        textarea {
-          width: 100%;
-          padding: 0.5rem;
-          margin: 0.5rem 0;
-          border-radius: 0.25rem;
-          border: 0.125rem solid rgba(0, 0, 0, 0.2);
-        }
-
-        input[type="submit"] {
-          background: #ececec;
-          border: 0;
-          padding: 1rem 2rem;
-        }
-
-        .back {
-          margin-left: 1rem;
-        }
-      `}</style>
-    </>
+      </Box>
+    </Container>
   );
 };
 
-export default Draft;
+export default CreateStashForm;
