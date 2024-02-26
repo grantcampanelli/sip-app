@@ -6,17 +6,14 @@ import type { Session } from "inspector";
 import { GetServerSideProps } from "next";
 import prisma from "../../lib/prismadb";
 import Link from "next/link";
-// import type { Stash } from "@prisma/client";
-
+import { Container, Grid, Image, Button, Group } from "@mantine/core";
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
-  //   const session = await getSession({ req });
 
   if (!session) {
     res.statusCode = 403;
     console.log("checking session and not finding it in stashes:", session);
 
-    //return { props: { stashes: [] } };
     return {
       redirect: {
         destination: "/",
@@ -41,52 +38,28 @@ type Props = {
 
 const Stashes: React.FC<Props> = (props) => {
   return (
-    <>
-      <div className="flex justify-center">
+    <Container>
+      <Group justify="space-between" h="100%" pl="10px" pt="10px">
         <h1>My Stashes</h1>
-      </div>
-      <div className="grid grid-cols-4 gap-4 place-items-center">
+
+        <Link href="/stashes/create">
+          <Button>Create Stash</Button>
+        </Link>
+      </Group>
+
+      <Grid>
         {props.stashes.map((stash) => (
-          <div key={stash.id}>
-            <Link href={`/stashes/${stash.id}`}>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                {stash.name}
-              </button>
+          <Grid.Col span={{ base: 12, xs: 4 }} key={stash.id}>
+            <Link
+              style={{ textDecoration: "none" }}
+              href={`/stashes/${stash.id}`}
+            >
+              <Button fullWidth>{stash.name}</Button>
             </Link>
-          </div>
+          </Grid.Col>
         ))}
-        <div>
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-            onClick={() => {
-              const modal = document.getElementById("my_modal_5") as HTMLDialogElement;
-              if (modal) {
-                modal.showModal();
-              }
-            }}
-          >
-            Create New Stash
-          </button>
-          <dialog
-            id="my_modal_5"
-            className="modal modal-bottom sm:modal-middle"
-          >
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">Hello!</h3>
-              <p className="py-4">
-                Press ESC key or click the button below to close
-              </p>
-              <div className="modal-action">
-                <form method="dialog">
-                  {/* if there is a button in form, it will close the modal */}
-                  <button className="btn">Close</button>
-                </form>
-              </div>
-            </div>
-          </dialog>
-        </div>
-      </div>
-    </>
+      </Grid>
+    </Container>
   );
 };
 

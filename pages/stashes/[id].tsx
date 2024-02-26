@@ -5,7 +5,8 @@ import { Stash, Shelf, ShelfItem, Bottle, Prisma } from "@prisma/client";
 import type { Session } from "inspector";
 import { GetServerSideProps } from "next";
 import prisma from "../../lib/prismadb";
-// import type { Stash } from "@prisma/client";
+import Link from "next/link";
+import { Container, Button, Grid, Group } from "@mantine/core";
 
 type StashWithFullData = Prisma.StashGetPayload<{
   include: {
@@ -77,22 +78,43 @@ type Props = {
 
 const Stashes: React.FC<Props> = (props) => {
   //   console.log("shelves: ", props.shelves);
-  console.log("stashwithFullData: ", props.stash);
   return (
-    <>
-      <div className="flex justify-center">
-        <h1 className="text-2xl font-bold">{props.stash.name}</h1>
-        {/* <h2>try {props.stash.shelves[0].shelfItems[0].bottleId}</h2> */}
-      </div>
-      <div className="grid grid-cols-4 gap-4 place-items-center">
-        {/* <ul> */}
-        {props.stash.shelves.map((shelf) => (
-          // <li key={shelf.id}>
-          <p>{shelf.name}</p>
+    <Container>
+      <Group justify="space-between" h="100%" pl="10px" pt="10px">
+        <h1>{props.stash.name}</h1>
+
+        <Link href="/shelf/create">
+          <Button>Create Shelf</Button>
+        </Link>
+      </Group>
+
+      <Grid>
+        {props.stash.shelves.map((shelf, index) => (
+          <Grid.Col span={{ base: 12, xs: 4 }} key={shelf.id}>
+            {/* <Link
+              style={{ textDecoration: "none" }}
+              href={`/stashes/${stash.id}`}
+            > */}
+            <Button fullWidth>Shelf {index + 1}</Button>
+            {/* </Link> */}
+          </Grid.Col>
         ))}
-        {/* </ul> */}
-      </div>
-    </>
+      </Grid>
+    </Container>
+    // <>
+    //   <div className="flex justify-center">
+    //     <h1 className="text-2xl font-bold">{props.stash.name}</h1>
+    //     {/* <h2>try {props.stash.shelves[0].shelfItems[0].bottleId}</h2> */}
+    //   </div>
+    //   <div className="grid grid-cols-4 gap-4 place-items-center">
+    //     {/* <ul> */}
+    //     {props.stash.shelves.map((shelf) => (
+    //       // <li key={shelf.id}>
+    //       <p>{shelf.name}</p>
+    //     ))}
+    //     {/* </ul> */}
+    //   </div>
+    // </>
   );
 };
 
