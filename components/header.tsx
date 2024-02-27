@@ -26,15 +26,15 @@ const SignedIn = () => {
     return (
       <>
         <Group h="100%" gap={0} visibleFrom="sm">
-          <a href="/brands" className={classes.link}>
+          <Link href="/brands" className={classes.link}>
             Browse
-          </a>
-          <a href="/bottles" className={classes.link}>
+          </Link>
+          <Link href="/bottles" className={classes.link}>
             My Bottles
-          </a>
-          <a href="/stashes" className={classes.link}>
+          </Link>
+          <Link href="/stashes" className={classes.link}>
             My Stashes
-          </a>
+          </Link>
           <Button onClick={() => signOut()}>Log Out</Button>
         </Group>
 
@@ -51,15 +51,15 @@ const SignedIn = () => {
         >
           <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
             <Divider my="sm" />
-            <a href="/brands" className={classes.link}>
+            <Link href="/brands" className={classes.link}>
               Browse
-            </a>
-            <a href="/bottles" className={classes.link}>
+            </Link>
+            <Link href="/bottles" className={classes.link}>
               My Bottles
-            </a>
-            <a href="/stashes" className={classes.link}>
+            </Link>
+            <Link href="/stashes" className={classes.link}>
               My Stashes
-            </a>
+            </Link>
 
             <Divider my="sm" />
             <Button fullWidth onClick={() => signOut()}>

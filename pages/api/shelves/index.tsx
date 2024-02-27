@@ -45,3 +45,10 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   });
   res.json(result);
 }
+
+/*
+code that would be used to concurrently update the shelves, thinking for updating their orders
+const results = await Promise.all(
+  tagIds.map(tagId => Tags.addFileToTag(parseInt(tagId), fileId)) // returns an array of Promises
+)
+*/
