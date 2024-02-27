@@ -57,6 +57,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       where: {
         id: bottleId,
       },
+      include: {
+        product: {
+          include: {
+            brand: true,
+          },
+        },
+      },
     })) || null;
 
   return {
@@ -75,7 +82,10 @@ type Props = {
 const BottlePage: React.FC<Props> = (props) => {
   return (
     <Container>
-      <h1>Bottle {props.bottle.id}</h1>
+      <h1>
+        {props.bottle.product.vintage} {props.bottle.product.name}
+      </h1>
+      <h2>Notes: {props.bottle.notes}</h2>
     </Container>
   );
 };

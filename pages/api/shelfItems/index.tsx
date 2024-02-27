@@ -1,16 +1,13 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import prisma from "../../../lib/prismadb";
 import { getSession } from "next-auth/react";
-import { Stash } from "@prisma/client";
 // import { getUserId } from '../../lib/nextAuth';
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
-    await handleGET(res, req);
-  } else if (req.method === "POST") {
+  if (req.method === "POST") {
     await handlePOST(res, req);
   } else {
     throw new Error(
@@ -19,22 +16,9 @@ export default async function handle(
   }
 }
 
-async function handleGET(res: NextApiResponse, req: NextApiRequest) {
-  const secret = process.env.SECRET;
-  const session = await getSession({ req });
-  console.log("session: ", session);
-  console.log("userid to fetch bottles for: ", session?.user?.id ?? null);
-  const stashes = await prisma.stash.findMany({
-    where: {
-      userId: session?.user?.id,
-    },
-  });
-  res.json(stashes);
-}
-
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   const secret = process.env.SECRET;
-  const { name, location, type } = req.body;
+  const { shelfId, bottleId, order } = req.body;
 
   console.log("POST body: ", req.body);
   const session = await getSession({ req });
@@ -44,19 +28,16 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
     return;
   }
 
-  const result = await prisma.stash.create({
+  const result = await prisma.shelfItem.create({
     data: {
-      name: name,
-      location: location,
-      type: type,
-      userId: userId,
+      shelfId: shelfId,
+      bottleId: bottleId,
+      order: order,
     },
     select: {
       id: true,
-      name: true,
-      location: true,
-      type: true,
-      userId: true,
+      shelfId: true,
+      bottleId: true,
     },
   });
   res.json(result);
