@@ -1,11 +1,8 @@
 import { authOptions } from "pages/api/auth/[...nextauth]";
-import { getSession, useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { Product, Prisma } from "@prisma/client";
-import type { Session } from "inspector";
 import { GetServerSideProps } from "next";
 import prisma from "../../../lib/prismadb";
-import Link from "next/link";
 import Router from "next/router";
 
 import {
@@ -21,13 +18,6 @@ import {
 import { DateTimePicker } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
-import { time } from "console";
-
-// type ProductWithFullData = Prisma.BrandGetPayload<{
-//   include: {
-//     shelf: true;
-//   };
-// }>;
 
 export const getServerSideProps: GetServerSideProps = async ({
   req,
@@ -47,7 +37,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
   }
-  //   let brand: BrandWithFullData | null = null;
   let product =
     (await prisma.product.findUnique({
       where: {
@@ -67,7 +56,6 @@ type Props = {
 };
 
 const ProductPage: React.FC<Props> = (props) => {
-  //   console.log("shelves: ", props.shelves);
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
     initialValues: {
@@ -97,6 +85,7 @@ const ProductPage: React.FC<Props> = (props) => {
         amountRemaining: 100.0,
         notes: form.values.notes,
         productId: props.product.id,
+        userIdInput: 
       };
       await fetch("/api/bottles", {
         method: "POST",
