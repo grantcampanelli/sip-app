@@ -2,6 +2,7 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { GetServerSideProps } from "next";
 import prisma from "../../lib/prismadb";
+import { Prisma } from "@prisma/client";
 
 // next imports
 import Link from "next/link";

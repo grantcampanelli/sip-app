@@ -85,7 +85,6 @@ const ProductPage: React.FC<Props> = (props) => {
         amountRemaining: 100.0,
         notes: form.values.notes,
         productId: props.product.id,
-        userIdInput: 
       };
       await fetch("/api/bottles", {
         method: "POST",
