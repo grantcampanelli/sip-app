@@ -1,6 +1,8 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import prisma from "../../../lib/prismadb";
 import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "pages/api/auth/[...nextauth]";
 // import { getUserId } from '../../lib/nextAuth';
 
 export default async function handle(
@@ -46,9 +48,11 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
     productId,
   } = req.body;
 
-  console.log("POST body: ", req.body);
-  const session = await getSession({ req });
-  if (!session?.user?.id) {
+  // console.log("POST body: ", req.body);
+  const session = await getServerSession(req, res, authOptions);
+  console.log("session when POST bottle: ", session);
+  const userId = session?.user?.id;
+  if (!userId) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
@@ -64,7 +68,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       finishDate: finishDate,
       amountRemaining: amountRemaining,
       notes: notes,
-      userId: session?.user?.id,
+      userId: userId,
       productId: productId,
     },
     select: {

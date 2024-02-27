@@ -1,8 +1,8 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import prisma from "../../../lib/prismadb";
 import { getSession } from "next-auth/react";
-import { Stash } from "@prisma/client";
-// import { getUserId } from '../../lib/nextAuth';
+import { getServerSession } from "next-auth";
+import { authOptions } from "pages/api/auth/[...nextauth]";
 
 export default async function handle(
   req: NextApiRequest,
@@ -21,12 +21,15 @@ export default async function handle(
 
 async function handleGET(res: NextApiResponse, req: NextApiRequest) {
   const secret = process.env.SECRET;
-  const session = await getSession({ req });
-  console.log("session: ", session);
-  console.log("userid to fetch bottles for: ", session?.user?.id ?? null);
+  const session = await getServerSession(req, res, authOptions);
+  const userId = session?.user?.id;
+  if (!userId) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
   const stashes = await prisma.stash.findMany({
     where: {
-      userId: session?.user?.id,
+      userId: userId,
     },
   });
   res.json(stashes);
@@ -37,7 +40,8 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   const { name, location, type } = req.body;
 
   console.log("POST body: ", req.body);
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+  console.log("session when POST stash: ", session);
   const userId = session?.user?.id;
   if (!userId) {
     res.status(401).json({ message: "Unauthorized" });
