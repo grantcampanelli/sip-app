@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { Stash, Shelf, ShelfItem, Bottle, Prisma } from "@prisma/client";
 import type { Session } from "inspector";
 import { GetServerSideProps } from "next";
-import prisma from "../../lib/prismadb";
+import prisma from "../../../lib/prismadb";
 import Link from "next/link";
 import { Container, Button, Grid, Group } from "@mantine/core";
 
@@ -12,7 +12,15 @@ type ShelfWithBottles = Prisma.ShelfGetPayload<{
   include: {
     shelfItems: {
       include: {
-        bottle: true;
+        bottle: {
+          include: {
+            product: {
+              include: {
+                brand: true;
+              };
+            };
+          };
+        };
       };
     };
   };
@@ -45,7 +53,15 @@ export const getServerSideProps: GetServerSideProps = async ({
       include: {
         shelfItems: {
           include: {
-            bottle: true,
+            bottle: {
+              include: {
+                product: {
+                  include: {
+                    brand: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -69,15 +85,26 @@ const ShelfItems: React.FC<Props> = (props) => {
       <Group justify="space-between" h="100%" pl="10px" pt="10px">
         <h1>Shelf {props.shelf.order}</h1>
 
-        {/* <Link href="/shelf/create">
+        <Link
+          href={`/shelves/${props.shelf.id}/addBottle`}
+          style={{ textDecoration: "none" }}
+        >
           <Button>Add Bottle</Button>
-        </Link> */}
+        </Link>
       </Group>
 
       <Grid>
         {props.shelf.shelfItems.map((shelfItem, index) => (
           <Grid.Col span={{ base: 12, xs: 4 }} key={shelfItem.id}>
-            <Button fullWidth>Bottle {index + 1}:</Button>
+            <Link
+              href={`/bottles/${shelfItem.bottle.id}`}
+              style={{ textDecoration: "none" }}
+            >
+              <Button fullWidth>
+                {shelfItem.bottle.product.vintage}{" "}
+                {shelfItem.bottle.product.name}
+              </Button>
+            </Link>
           </Grid.Col>
         ))}
       </Grid>

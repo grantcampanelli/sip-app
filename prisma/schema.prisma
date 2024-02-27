@@ -39,6 +39,7 @@ model Bottle {
   user            User       @relation(fields: [userId], references: [id])
   productId       String
   product         Product    @relation(fields: [productId], references: [id])
+  shelfItemId     String?
   shelfItem       ShelfItem?
 }
 
@@ -67,9 +68,9 @@ model ShelfItem {
   id       String @id @default(cuid())
   order    Int
   bottleId String @unique
-  shelfId  String @unique
-  bottle   Bottle @relation(fields: [bottleId], references: [id], onDelete: Cascade)
-  shelf    Shelf  @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+  shelfId  String
+  bottle   Bottle @relation(fields: [bottleId], references: [id])
+  shelf    Shelf  @relation(fields: [shelfId], references: [id])
 }
 
 model Account {
