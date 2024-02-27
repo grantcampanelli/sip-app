@@ -10,13 +10,16 @@ export default function Page() {
       <Container>
         <Grid>
           <Grid.Col span={{ base: 12, xs: 4 }}>
-            <Image src="/images/beer-fridge-animated.png" />
+            <Image src="/images/beer-fridge-animated.png" alt="Beer Fridge" />
           </Grid.Col>
           <Grid.Col span={{ base: 12, xs: 4 }}>
-            <Image src="/images/whiskey-cabinet-animated.png" />
+            <Image
+              src="/images/whiskey-cabinet-animated.png"
+              alt="Whiskey Cabinet"
+            />
           </Grid.Col>
           <Grid.Col span={{ base: 12, xs: 4 }}>
-            <Image src="/images/wine-fridge-animated.png" />
+            <Image src="/images/wine-fridge-animated.png" alt="Wine Fridge" />
           </Grid.Col>
         </Grid>
       </Container>

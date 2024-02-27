@@ -7,6 +7,12 @@ import { GetServerSideProps } from "next";
 import prisma from "../../../lib/prismadb";
 import Link from "next/link";
 import Router from "next/router";
+import { Divider, rem, Text } from "@mantine/core";
+import { useListState } from "@mantine/hooks";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { IconGripVertical } from "@tabler/icons-react";
+import classes from "/styles/DndListHandle.module.css";
+import cx from "clsx";
 
 import {
   Container,
@@ -86,11 +92,9 @@ export const getServerSideProps: GetServerSideProps = async ({
 
 type Props = {
   stash: StashWithFullData;
-  //   shelves: Shelf[];
 };
 
 const Stashes: React.FC<Props> = (props) => {
-  //   console.log("shelves: ", props.shelves);
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
     initialValues: {
@@ -100,9 +104,6 @@ const Stashes: React.FC<Props> = (props) => {
       temp: 0.0,
       stashId: "",
     },
-    // validate: {
-    //   email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-    // },
   });
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -129,6 +130,39 @@ const Stashes: React.FC<Props> = (props) => {
     }
   };
 
+  const [state, handlers] = useListState(props.stash.shelves);
+
+  const items = state.map((item, index) => (
+    <Draggable key={item.name} index={index} draggableId={item.name}>
+      {(provided, snapshot) => (
+        <div
+          className={cx(classes.item, {
+            [classes.itemDragging]: snapshot.isDragging,
+          })}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+        >
+          <div>
+            <Group justify="space-between" h="100%" pl="10px" pt="10px">
+              <Text>{item.name}</Text>
+              <Text c="dimmed" size="sm">
+                Capacity: {item.capacity} - Contains: {item.shelfItems.length}
+              </Text>
+              <Link
+                key={item.id}
+                style={{ textDecoration: "none" }}
+                href={`/shelves/${item.id}`}
+              >
+                <Button fullWidth>Open Shelf</Button>
+              </Link>
+            </Group>
+          </div>
+        </div>
+      )}
+    </Draggable>
+  ));
+
   return (
     <Container>
       <Group justify="space-between" h="100%" pl="10px" pt="10px">
@@ -140,8 +174,12 @@ const Stashes: React.FC<Props> = (props) => {
       </Group>
 
       {props.stash.shelves.map((shelf, index) => (
-        <Link style={{ textDecoration: "none" }} href={`/shelves/${shelf.id}`}>
-          <Button fullWidth>Shelf {index + 1}</Button>
+        <Link
+          key={shelf.id}
+          style={{ textDecoration: "none" }}
+          href={`/shelves/${shelf.id}`}
+        >
+          <Button fullWidth>{shelf.name}</Button>
         </Link>
       ))}
 
@@ -180,6 +218,26 @@ const Stashes: React.FC<Props> = (props) => {
           </form>
         </Box>
       </Modal>
+
+      <Divider my="md" />
+      <Group>
+        <h1>Coming Soon... Drag and Drop Ordering</h1>
+        <Button>Save Order</Button>
+      </Group>
+      <DragDropContext
+        onDragEnd={({ destination, source }) =>
+          handlers.reorder({ from: source.index, to: destination?.index || 0 })
+        }
+      >
+        <Droppable droppableId="dnd-list" direction="vertical">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {items}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </Container>
   );
 };

@@ -112,6 +112,7 @@ const Brand: React.FC<Props> = (props) => {
         <Link
           style={{ textDecoration: "none" }}
           href={`/products/${product.id}`}
+          key={product.id}
         >
           <Button fullWidth>
             {product.vintage} {product.name}
