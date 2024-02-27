@@ -1,5 +1,7 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import prisma from "../../../lib/prismadb";
+import { getServerSession } from "next-auth";
+import { authOptions } from "pages/api/auth/[...nextauth]";
 
 export default async function handle(
   req: NextApiRequest,
@@ -17,7 +19,12 @@ export default async function handle(
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   const { name, vintage, varietal, brandId } = req.body;
 
-  console.log("POST body: ", req.body);
+  const session = await getServerSession(req, res, authOptions);
+  const userId = session?.user?.id;
+  if (!userId) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
 
   const result = await prisma.product.create({
     data: {

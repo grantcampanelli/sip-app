@@ -21,13 +21,15 @@ export default async function handle(
 }
 
 async function handleGET(res: NextApiResponse, req: NextApiRequest) {
-  const secret = process.env.SECRET;
-  const session = await getSession({ req });
-  console.log("session: ", session);
-  console.log("userid to fetch bottles for: ", session?.user?.id ?? null);
+  const session = await getServerSession(req, res, authOptions);
+  const userId = session?.user?.id;
+  if (!userId) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
   const bottles = await prisma.bottle.findMany({
     where: {
-      userId: session?.user?.id,
+      userId: userId,
     },
   });
   res.json(bottles);
@@ -48,9 +50,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
     productId,
   } = req.body;
 
-  // console.log("POST body: ", req.body);
   const session = await getServerSession(req, res, authOptions);
-  console.log("session when POST bottle: ", session);
   const userId = session?.user?.id;
   if (!userId) {
     res.status(401).json({ message: "Unauthorized" });

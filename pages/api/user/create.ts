@@ -22,10 +22,6 @@ const hashPassword = (password: string) => {
 
 // POST /api/user
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
-//   logger.debug("creating user", {
-//     ...req.body,
-//     password: hashPassword(req.body.password),
-//   });
   const user = await prisma.user.create({
     data: { ...req.body, password: hashPassword(req.body.password) },
   });
