@@ -26,11 +26,14 @@ const SignedIn = () => {
     return (
       <>
         <Group h="100%" gap={0} visibleFrom="sm">
-          {/* <a href="/bottles" className={classes.link}>
-            Bottles
-          </a> */}
+          <a href="/brands" className={classes.link}>
+            Browse
+          </a>
+          <a href="/bottles" className={classes.link}>
+            My Bottles
+          </a>
           <a href="/stashes" className={classes.link}>
-            Stashes
+            My Stashes
           </a>
           <Button onClick={() => signOut()}>Log Out</Button>
         </Group>
@@ -48,11 +51,14 @@ const SignedIn = () => {
         >
           <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
             <Divider my="sm" />
-            {/* <a href="/bottles" className={classes.link}>
-              Bottles
-            </a> */}
+            <a href="/brands" className={classes.link}>
+              Browse
+            </a>
+            <a href="/bottles" className={classes.link}>
+              My Bottles
+            </a>
             <a href="/stashes" className={classes.link}>
-              Stashes
+              My Stashes
             </a>
 
             <Divider my="sm" />

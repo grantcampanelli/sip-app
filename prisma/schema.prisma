@@ -27,13 +27,14 @@ model Brand {
 model Bottle {
   id              String     @id @default(cuid())
   size            Float?
-  servingSize     Float
-  purchasePrice   Float
-  purchaseDate    DateTime
-  openDate        DateTime
-  finishDate      DateTime
-  amountRemaining Float
-  notes           String
+  servingSize     Float?
+  purchasePrice   Float?
+  purchaseDate    DateTime?
+  openDate        DateTime?
+  finished        Boolean?
+  finishDate      DateTime?
+  amountRemaining Float?
+  notes           String?
   userId          String
   user            User       @relation(fields: [userId], references: [id])
   productId       String

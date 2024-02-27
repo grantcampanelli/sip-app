@@ -69,9 +69,9 @@ const ShelfItems: React.FC<Props> = (props) => {
       <Group justify="space-between" h="100%" pl="10px" pt="10px">
         <h1>Shelf {props.shelf.order}</h1>
 
-        <Link href="/shelf/create">
+        {/* <Link href="/shelf/create">
           <Button>Add Bottle</Button>
-        </Link>
+        </Link> */}
       </Group>
 
       <Grid>
