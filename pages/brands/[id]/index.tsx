@@ -68,7 +68,6 @@ type Props = {
 };
 
 const Brand: React.FC<Props> = (props) => {
-  //   console.log("shelves: ", props.shelves);
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
     initialValues: {
@@ -126,7 +125,7 @@ const Brand: React.FC<Props> = (props) => {
             <TextInput
               withAsterisk
               label="Name"
-              placeholder="1st Shelf"
+              placeholder="Justification"
               {...form.getInputProps("name")}
             />
             <TextInput
@@ -141,24 +140,7 @@ const Brand: React.FC<Props> = (props) => {
               placeholder="Cabernet Sauvignon"
               {...form.getInputProps("varietal")}
             />
-            {/* <NumberInput
-              withAsterisk
-              label="Order"
-              placeholder="1"
-              {...form.getInputProps("order")}
-            />
-            <NumberInput
-              withAsterisk
-              label="Capacity"
-              placeholder="5"
-              {...form.getInputProps("capacity")}
-            />
-            <NumberInput
-              withAsterisk
-              label="Temperature"
-              placeholder="5"
-              {...form.getInputProps("temp")}
-            /> */}
+
             <Group justify="flex-end" mt="md">
               <Button type="submit" onClick={submitData}>
                 Submit

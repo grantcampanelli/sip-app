@@ -37,7 +37,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  // console.log("queryid: ", query.id);
   const shelfId: string = Array.isArray(query.id) ? "" : query.id || "";
   if (!session) {
     res.statusCode = 403;
@@ -50,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   }
 
   const usersBottles: BottleWithFullData[] = await prisma.bottle.findMany({
-    where: { userId: session?.user?.id },
+    where: { userId: session?.user?.id, shelfItem: null, finished: false },
     include: {
       product: {
         include: {
@@ -82,15 +81,13 @@ const CreateBottleForm: React.FC<Props> = (props) => {
   const form = useForm({
     initialValues: {
       bottleId: "",
+      shelfId: props.shelfId,
       order: 1,
     },
   });
 
   const submitData = async (e: React.SyntheticEvent) => {
-    console.log("submitData function");
-
     e.preventDefault();
-    console.log("form.values: ", form.values);
 
     try {
       const body = {
@@ -98,14 +95,13 @@ const CreateBottleForm: React.FC<Props> = (props) => {
         shelfId: props.shelfId,
         order: form.values.order,
       };
-      console.log("body: ", body);
       await fetch("/api/shelfItems", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      // const url = "/shelves/" + props.shelfId;
-      // await Router.push("/shelves/");
+      const url = "/shelves/" + props.shelfId;
+      await Router.push(url);
     } catch (error) {
       console.error(error);
     }
