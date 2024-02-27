@@ -38,6 +38,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       id: true,
       shelfId: true,
       bottleId: true,
+      order: true,
     },
   });
   res.json(result);
