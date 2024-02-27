@@ -17,7 +17,7 @@ export default async function handle(
 }
 
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
-  const { name } = req.body;
+  const { name, type } = req.body;
 
   const session = await getServerSession(req, res, authOptions);
   const userId = session?.user?.id;
@@ -29,6 +29,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   const result = await prisma.brand.create({
     data: {
       name: name,
+      type: type,
     },
     select: {
       id: true,

@@ -20,6 +20,7 @@ import {
   Box,
   TextInput,
   NumberInput,
+  Select,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
@@ -64,6 +65,7 @@ const Brands: React.FC<Props> = (props) => {
   const form = useForm({
     initialValues: {
       name: "",
+      type: "WINE",
     },
   });
 
@@ -73,7 +75,9 @@ const Brands: React.FC<Props> = (props) => {
     try {
       const body = {
         name: form.values.name,
+        type: form.values.type,
       };
+      console.log("create brand body: ", body);
       await fetch("/api/brands", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -114,6 +118,18 @@ const Brands: React.FC<Props> = (props) => {
               placeholder="Justin"
               {...form.getInputProps("name")}
             />
+            <Select
+              withAsterisk
+              label="Type"
+              placeholder="Select type"
+              data={[
+                { label: "Wine", value: "WINE" },
+                { label: "Spirits", value: "SPIRIT" },
+                { label: "Beer", value: "BEER" },
+              ]}
+              {...form.getInputProps("type")}
+            />
+
             <Group justify="flex-end" mt="md">
               <Button type="submit" onClick={submitData}>
                 Submit
