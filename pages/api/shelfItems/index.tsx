@@ -1,7 +1,8 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import prisma from "../../../lib/prismadb";
 import { getSession } from "next-auth/react";
-// import { getUserId } from '../../lib/nextAuth';
+import { getServerSession } from "next-auth";
+import { authOptions } from "pages/api/auth/[...nextauth]";
 
 export default async function handle(
   req: NextApiRequest,
@@ -17,11 +18,8 @@ export default async function handle(
 }
 
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
-  const secret = process.env.SECRET;
   const { shelfId, bottleId, order } = req.body;
-
-  console.log("POST body: ", req.body);
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   const userId = session?.user?.id;
   if (!userId) {
     res.status(401).json({ message: "Unauthorized" });
