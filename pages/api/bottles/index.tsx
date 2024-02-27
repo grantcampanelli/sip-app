@@ -48,8 +48,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
 
   console.log("POST body: ", req.body);
   const session = await getSession({ req });
-  const userId = session?.user?.id;
-  if (!userId) {
+  if (!session?.user?.id) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
@@ -65,8 +64,8 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       finishDate: finishDate,
       amountRemaining: amountRemaining,
       notes: notes,
-      userId: userId,
-      productId: productId, // Add the missing productId property
+      userId: session?.user?.id,
+      productId: productId,
     },
     select: {
       id: true,
