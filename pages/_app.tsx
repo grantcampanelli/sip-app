@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import Header from "../components/header";
 import "@mantine/core/styles.css";
+import { Analytics } from "@vercel/analytics/react";
 
 // * NEXTAUTH - import SessionProvider
 import { SessionProvider } from "next-auth/react";
@@ -21,6 +22,7 @@ export default function App({
         <link rel="icon" href="/favicon.ico" />
         <ColorSchemeScript />
       </Head>
+      <Analytics />
 
       {/* NOTE: NEXTAUTH - wrap the app with SessionProvider */}
       <SessionProvider session={session}>
