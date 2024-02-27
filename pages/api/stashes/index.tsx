@@ -36,12 +36,9 @@ async function handleGET(res: NextApiResponse, req: NextApiRequest) {
 }
 
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
-  const secret = process.env.SECRET;
   const { name, location, type } = req.body;
 
-  console.log("POST body: ", req.body);
   const session = await getServerSession(req, res, authOptions);
-  console.log("session when POST stash: ", session);
   const userId = session?.user?.id;
   if (!userId) {
     res.status(401).json({ message: "Unauthorized" });
