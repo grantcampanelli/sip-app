@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import prisma from "lib/prismadb";
+import Link from "next/link";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import Router from "next/router";
 import {
@@ -111,6 +112,11 @@ const CreateBottleForm: React.FC<Props> = (props) => {
     <Container>
       <h1>Add Bottle</h1>
       <Box maw={340} mx="auto">
+        <h4>
+          You can add bottles to your shelf once you have added your bottle to
+          your collection. You can do this by browsing the catalog{" "}
+          <Link href="/brands">here</Link>.
+        </h4>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           <Select
             label="Bottle"

@@ -62,9 +62,3 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   });
   res.json(result);
 }
-
-/*
-const results = await Promise.all(
-  tagIds.map(tagId => Tags.addFileToTag(parseInt(tagId), fileId)) // returns an array of Promises
-)
-*/
