@@ -12,7 +12,7 @@ import { rem } from "@mantine/core";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useListState } from "@mantine/hooks";
 import { IconGripVertical } from "@tabler/icons-react";
-import classes from "/styles/DndListHandle.module.css";
+import classes from "/styles/DndTableHandle.module.css";
 
 type ShelfWithBottles = Prisma.ShelfGetPayload<{
   include: {
@@ -98,7 +98,10 @@ const ShelfItems: React.FC<Props> = (props) => {
           {...provided.draggableProps}
         >
           <Table.Td>
-            <div className={classes.dragHandle} {...provided.dragHandleProps}>
+            <div
+              className={classes.dragHandleTable}
+              {...provided.dragHandleProps}
+            >
               <IconGripVertical
                 style={{ width: rem(18), height: rem(18) }}
                 stroke={1.5}
@@ -108,17 +111,8 @@ const ShelfItems: React.FC<Props> = (props) => {
           <Table.Td style={{ width: rem(80) }}>
             {item.bottle.product.name}
           </Table.Td>
-          <Table.Td style={{ width: rem(120) }}>
-            <Link href={"/blah"}>
-              <Button>View</Button>
-            </Link>
-          </Table.Td>
-          <Table.Td style={{ width: rem(80) }}>
-            <Link href={"/blah"}>
-              <Button>Delete</Button>
-            </Link>
-          </Table.Td>
-          <Table.Td>{item.mass}</Table.Td>
+          <Table.Td style={{ width: rem(120) }}>view</Table.Td>
+          <Table.Td style={{ width: rem(80) }}>delete</Table.Td>
         </Table.Tr>
       )}
     </Draggable>
@@ -136,7 +130,6 @@ const ShelfItems: React.FC<Props> = (props) => {
           <Button>Add Bottle</Button>
         </Link>
       </Group>
-
       <Grid>
         {props.shelf.shelfItems.map((shelfItem, index) => (
           <Grid.Col span={{ base: 12, xs: 4 }} key={shelfItem.id}>
@@ -152,9 +145,8 @@ const ShelfItems: React.FC<Props> = (props) => {
           </Grid.Col>
         ))}
       </Grid>
-
-      <Divider />
       <h1>Drag & Drop Table Coming Soon</h1>
+
       <Table.ScrollContainer minWidth={420}>
         <DragDropContext
           onDragEnd={({ destination, source }) =>
@@ -171,7 +163,6 @@ const ShelfItems: React.FC<Props> = (props) => {
                 <Table.Th style={{ width: rem(80) }}>Name</Table.Th>
                 <Table.Th style={{ width: rem(120) }}>View</Table.Th>
                 <Table.Th style={{ width: rem(40) }}>Delete</Table.Th>
-                <Table.Th>Mass</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Droppable droppableId="dnd-list" direction="vertical">
