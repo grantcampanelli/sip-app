@@ -26,7 +26,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  console.log("id query parm: ", query);
   let productId: string = Array.isArray(query.id) ? "" : query.id || "";
   if (!session) {
     res.statusCode = 403;

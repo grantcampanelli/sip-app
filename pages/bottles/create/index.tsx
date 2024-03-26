@@ -23,8 +23,6 @@ import type { Bottle, Product, Brand } from "@prisma/client";
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  console.log("getting bottles!!");
-
   if (!session) {
     res.statusCode = 403;
     return {
@@ -59,28 +57,6 @@ type Props = {
 };
 var productsFiltered: ComboboxData = [];
 
-// async function updateProductList(brandIDInput: string) {
-//   "use server";
-//   const productsFilteredDB = await prisma.product.findMany({
-//     where: { brandId: brandIDInput },
-//   });
-//   const productComboBox = productsFilteredDB.map((product) => {
-//     return { value: product.id, label: product.name };
-//   });
-//   productsFiltered = productComboBox;
-// }
-
-// productsFiltered = productComboBox;
-// const productsFilteredReturn = props.productComboBox.filter((product) => {
-//   console.log("filter to brandId: ", brandId, "and product: ", product);
-
-//   return product.brandId == brandId;
-// });
-// productsFiltered = productsFilteredReturn;
-// return productsFilteredReturn;
-// console.log("productsFiltered: ", productsFiltered);
-// }
-
 const CreateBottleForm: React.FC<Props> = (props) => {
   var productsFiltered: ComboboxData = props.productComboBox;
 
@@ -90,7 +66,6 @@ const CreateBottleForm: React.FC<Props> = (props) => {
       productId: "",
     },
     onValuesChange: (values) => {
-      console.log("values: ", values);
       //   updateProductList(values.brandId);
     },
     // onValuesChange: (values) => {
@@ -100,10 +75,7 @@ const CreateBottleForm: React.FC<Props> = (props) => {
   });
 
   const submitData = async (e: React.SyntheticEvent) => {
-    console.log("submitData function");
-
     e.preventDefault();
-    console.log("form.values: ", form.values);
 
     try {
       //   console.log("form.values: ", form.values);
