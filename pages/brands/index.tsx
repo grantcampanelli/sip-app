@@ -283,7 +283,10 @@ const Brands: React.FC<Props> = (props) => {
             ) : (
               <Table.Tr>
                 <Table.Td
-                  colSpan={Object.keys(props.brandFlatRowData[0]).length}
+                  colSpan={
+                    props.brandFlatRowData[0] &&
+                    Object.keys(props.brandFlatRowData[0]).length
+                  }
                 >
                   <Text fw={500} ta="center">
                     Nothing found
