@@ -233,22 +233,6 @@ const Brands: React.FC<Props> = (props) => {
         <Button onClick={open}>Add Brand</Button>
       </Group>
 
-      <Grid>
-        {props.brands.map((brand) => (
-          <Grid.Col span={{ base: 12, xs: 4 }} key={brand.id}>
-            <Link
-              style={{ textDecoration: "none" }}
-              href={`/brands/${brand.id}`}
-            >
-              <Button fullWidth>{brand.name}</Button>
-            </Link>
-          </Grid.Col>
-        ))}
-      </Grid>
-
-      <Divider my="md" />
-      <h1>Coming soon... sort & filter table</h1>
-
       <ScrollArea>
         <TextInput
           placeholder="Search by any field"
@@ -310,31 +294,6 @@ const Brands: React.FC<Props> = (props) => {
           </Table.Tbody>
         </Table>
       </ScrollArea>
-
-      {/* <Table.ScrollContainer minWidth={800}>
-        <Table verticalSpacing="xs">
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>Type</Table.Th>
-              <Table.Th>Products</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {props.brands.map((brand) => (
-              <Table.Tr key={brand.name}>
-                <Table.Td>{brand.name}</Table.Td>
-                <Table.Td>{brand.type}</Table.Td>
-                <Table.Td>
-                  <Link href={`/brands/${brand.id}`}>
-                    <Button>View</Button>
-                  </Link>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-      </Table.ScrollContainer> */}
 
       <Modal opened={opened} onClose={close} title="Add Brand">
         <Box maw={340} mx="auto">
