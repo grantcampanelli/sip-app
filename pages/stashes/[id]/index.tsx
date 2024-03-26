@@ -11,7 +11,7 @@ import { Divider, rem, Text } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { IconGripVertical } from "@tabler/icons-react";
-import classes from "/styles/DndListHandle.module.css";
+import classes from "/styles/DndTableHandle.module.css";
 import cx from "clsx";
 
 import {
@@ -23,6 +23,7 @@ import {
   Box,
   TextInput,
   NumberInput,
+  Table,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
@@ -85,7 +86,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   return {
     props: {
       stash,
-      // shelves: stash?.shelves
     },
   };
 };
@@ -121,7 +121,6 @@ const Stashes: React.FC<Props> = (props) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      // need to return back to right fridge page
       const url = "/stashes/" + props.stash.id;
       await Router.push(url);
       close();
@@ -133,32 +132,39 @@ const Stashes: React.FC<Props> = (props) => {
   const [state, handlers] = useListState(props.stash.shelves);
 
   const items = state.map((item, index) => (
-    <Draggable key={item.name} index={index} draggableId={item.name}>
-      {(provided, snapshot) => (
-        <div
-          className={cx(classes.item, {
-            [classes.itemDragging]: snapshot.isDragging,
-          })}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
+    <Draggable key={item.id} index={index} draggableId={item.id}>
+      {(provided) => (
+        <Table.Tr
+          className={classes.item}
           ref={provided.innerRef}
+          {...provided.draggableProps}
         >
-          <div>
-            <Group justify="space-between" h="100%" pl="10px" pt="10px">
-              <Text>{item.name}</Text>
-              <Text c="dimmed" size="sm">
-                Capacity: {item.capacity} - Contains: {item.shelfItems.length}
-              </Text>
-              <Link
-                key={item.id}
-                style={{ textDecoration: "none" }}
-                href={`/shelves/${item.id}`}
-              >
-                <Button fullWidth>Open Shelf</Button>
-              </Link>
-            </Group>
-          </div>
-        </div>
+          <Table.Td>
+            <div
+              className={classes.dragHandleTable}
+              {...provided.dragHandleProps}
+            >
+              <IconGripVertical
+                style={{ width: rem(18), height: rem(18) }}
+                stroke={1.5}
+              />
+            </div>
+          </Table.Td>
+          <Table.Td style={{ width: rem(40) }}>{item.name} </Table.Td>
+          <Table.Td style={{ width: rem(40) }}>{item.capacity}</Table.Td>
+          <Table.Td style={{ width: rem(40) }}>
+            {item.shelfItems.length}
+          </Table.Td>
+          <Table.Td style={{ width: rem(40) }}>
+            <Link
+              key={item.id}
+              style={{ textDecoration: "none" }}
+              href={`/shelves/${item.id}`}
+            >
+              <Button>Open</Button>
+            </Link>
+          </Table.Td>
+        </Table.Tr>
       )}
     </Draggable>
   ));
@@ -168,20 +174,42 @@ const Stashes: React.FC<Props> = (props) => {
       <Group justify="space-between" h="100%" pl="10px" pt="10px">
         <h1>{props.stash.name}</h1>
 
-        {/* <Link href={`/stashes/${props.stash.id}/createShelf`}> */}
         <Button onClick={open}>Create Shelf</Button>
-        {/* </Link> */}
       </Group>
 
-      {props.stash.shelves.map((shelf, index) => (
-        <Link
-          key={shelf.id}
-          style={{ textDecoration: "none" }}
-          href={`/shelves/${shelf.id}`}
+      <Table.ScrollContainer minWidth={420}>
+        <DragDropContext
+          onDragEnd={({ destination, source }) =>
+            handlers.reorder({
+              from: source.index,
+              to: destination?.index || 0,
+            })
+          }
         >
-          <Button fullWidth>{shelf.name}</Button>
-        </Link>
-      ))}
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th style={{ width: rem(40) }} />
+                <Table.Th style={{ width: rem(40) }}>Name</Table.Th>
+                <Table.Th style={{ width: rem(40) }}>Capacity</Table.Th>
+                <Table.Th style={{ width: rem(40) }}>Contains</Table.Th>
+                <Table.Th style={{ width: rem(40) }}>Open</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Droppable droppableId="dnd-list" direction="vertical">
+              {(provided) => (
+                <Table.Tbody
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {items}
+                  {provided.placeholder}
+                </Table.Tbody>
+              )}
+            </Droppable>
+          </Table>
+        </DragDropContext>
+      </Table.ScrollContainer>
 
       <Modal opened={opened} onClose={close} title="Create Shelf">
         <Box maw={340} mx="auto">
@@ -218,26 +246,6 @@ const Stashes: React.FC<Props> = (props) => {
           </form>
         </Box>
       </Modal>
-
-      <Divider my="md" />
-      <Group>
-        <h1>Coming Soon... Drag and Drop Ordering</h1>
-        <Button>Save Order</Button>
-      </Group>
-      <DragDropContext
-        onDragEnd={({ destination, source }) =>
-          handlers.reorder({ from: source.index, to: destination?.index || 0 })
-        }
-      >
-        <Droppable droppableId="dnd-list" direction="vertical">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {items}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
     </Container>
   );
 };
