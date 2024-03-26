@@ -130,22 +130,6 @@ const ShelfItems: React.FC<Props> = (props) => {
           <Button>Add Bottle</Button>
         </Link>
       </Group>
-      <Grid>
-        {props.shelf.shelfItems.map((shelfItem, index) => (
-          <Grid.Col span={{ base: 12, xs: 4 }} key={shelfItem.id}>
-            <Link
-              href={`/bottles/${shelfItem.bottle.id}`}
-              style={{ textDecoration: "none" }}
-            >
-              <Button fullWidth>
-                {shelfItem.bottle.product.vintage}{" "}
-                {shelfItem.bottle.product.name}
-              </Button>
-            </Link>
-          </Grid.Col>
-        ))}
-      </Grid>
-      <h1>Drag & Drop Table Coming Soon</h1>
 
       <Table.ScrollContainer minWidth={420}>
         <DragDropContext
