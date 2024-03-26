@@ -50,11 +50,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   const session = await getServerSession(req, res, authOptions);
   //   const session = await getSession({ req });
 
-  console.log("id query parm: ", query);
   let stashId: string = Array.isArray(query.id) ? "" : query.id || "";
   if (!session) {
     res.statusCode = 403;
-    console.log("checking session and not finding it in stashes:", session);
 
     //return { props: { stashes: [] } };
     return {

@@ -3,11 +3,9 @@ import { useSession } from "next-auth/react";
 export default function Page() {
   const { data: session, status } = useSession();
 
-  console.log(session, status);
   if (status === "loading") {
     return <p>Loading...</p>;
   }
-  console.log(session, status);
   if (status === "unauthenticated") {
     return <p>Access Denied</p>;
   }
@@ -18,7 +16,6 @@ export default function Page() {
     const fetchedWineries = await fetch("/api/wineries"); // replace with your API endpoint
     const wineriesData = await fetchedWineries.json();
   }
-  console.log(session, status);
   return (
     <>
       <h1>Protected Page</h1>
@@ -27,5 +24,4 @@ export default function Page() {
       <p></p>
     </>
   );
-  console.log(session, status);
 }

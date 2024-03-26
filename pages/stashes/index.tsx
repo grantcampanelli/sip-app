@@ -12,7 +12,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
   if (!session) {
     res.statusCode = 403;
-    console.log("checking session and not finding it in stashes:", session);
 
     return {
       redirect: {

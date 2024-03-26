@@ -41,7 +41,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   let shelfId: string = Array.isArray(query.id) ? "" : query.id || "";
   if (!session) {
     res.statusCode = 403;
-    console.log("checking session and not finding it in shelf:", session);
 
     return {
       redirect: {
@@ -72,7 +71,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     })) || null;
-  console.log("stashID for shelf:", shelf);
 
   return {
     props: {
@@ -108,11 +106,13 @@ const ShelfItems: React.FC<Props> = (props) => {
               />
             </div>
           </Table.Td>
-          <Table.Td style={{ width: rem(80) }}>
-            {item.bottle.product.name}
+          <Table.Td>{item.bottle.product.name}</Table.Td>
+          <Table.Td>
+            {item.bottle.purchaseDate
+              ? item.bottle.purchaseDate.toLocaleDateString()
+              : null}
           </Table.Td>
-          <Table.Td style={{ width: rem(120) }}>view</Table.Td>
-          <Table.Td style={{ width: rem(80) }}>delete</Table.Td>
+          <Table.Td>view</Table.Td>
         </Table.Tr>
       )}
     </Draggable>
@@ -143,10 +143,10 @@ const ShelfItems: React.FC<Props> = (props) => {
           <Table>
             <Table.Thead>
               <Table.Tr>
-                <Table.Th style={{ width: rem(40) }} />
-                <Table.Th style={{ width: rem(80) }}>Name</Table.Th>
-                <Table.Th style={{ width: rem(120) }}>View</Table.Th>
-                <Table.Th style={{ width: rem(40) }}>Delete</Table.Th>
+                <Table.Th />
+                <Table.Th> Name</Table.Th>
+                <Table.Th>Purchase Date</Table.Th>
+                <Table.Th>View</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Droppable droppableId="dnd-list" direction="vertical">
