@@ -4,10 +4,9 @@ import Head from "next/head";
 import Header from "../components/header";
 import "@mantine/core/styles.css";
 import { Analytics } from "@vercel/analytics/react";
-
-// * NEXTAUTH - import SessionProvider
 import { SessionProvider } from "next-auth/react";
 import { MantineProvider, ColorSchemeScript } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 
 export default function App({
   Component,
@@ -24,11 +23,12 @@ export default function App({
       </Head>
       <Analytics />
 
-      {/* NOTE: NEXTAUTH - wrap the app with SessionProvider */}
       <SessionProvider session={session}>
         <MantineProvider>
-          <Header />
-          <Component {...pageProps} />
+          <ModalsProvider>
+            <Header />
+            <Component {...pageProps} />
+          </ModalsProvider>
         </MantineProvider>
       </SessionProvider>
     </>

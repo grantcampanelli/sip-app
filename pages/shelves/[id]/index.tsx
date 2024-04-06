@@ -112,7 +112,9 @@ const ShelfItems: React.FC<Props> = (props) => {
               ? item.bottle.purchaseDate.toLocaleDateString()
               : null}
           </Table.Td>
-          <Table.Td>view</Table.Td>
+          <Table.Td>
+            <Link href={`/bottles/${item.bottle.id}`}>View</Link>
+          </Table.Td>
         </Table.Tr>
       )}
     </Draggable>

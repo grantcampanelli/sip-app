@@ -51,13 +51,25 @@ const SignedIn = () => {
         >
           <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
             <Divider my="sm" />
-            <Link href="/brands" className={classes.link}>
+            <Link
+              href="/brands"
+              className={classes.link}
+              onClick={toggleDrawer}
+            >
               Browse
             </Link>
-            <Link href="/bottles" className={classes.link}>
+            <Link
+              href="/bottles"
+              className={classes.link}
+              onClick={toggleDrawer}
+            >
               My Bottles
             </Link>
-            <Link href="/stashes" className={classes.link}>
+            <Link
+              href="/stashes"
+              className={classes.link}
+              onClick={toggleDrawer}
+            >
               My Stashes
             </Link>
 
