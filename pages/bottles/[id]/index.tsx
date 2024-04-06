@@ -151,8 +151,8 @@ const BottlePage: React.FC<Props> = (props) => {
                 title: "Do you want to remove this bottle from your stash?",
                 children: (
                   <Text size="sm">
-                    This will remove this bottle from your shelf, but it won't
-                    mark it as finished.
+                    This will remove this bottle from your shelf, but it will
+                    not mark it as finished.
                   </Text>
                 ),
                 labels: { confirm: "Confirm", cancel: "Cancel" },
