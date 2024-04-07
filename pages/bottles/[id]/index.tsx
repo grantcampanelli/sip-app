@@ -166,7 +166,24 @@ const BottlePage: React.FC<Props> = (props) => {
           >
             Remove from Shelf
           </Button>
-        ) : null}
+        ) : (
+          <Button
+            fullWidth
+            onClick={() =>
+              modals.openConfirmModal({
+                title: "Which shelf do you want to add it to?",
+                children: <Text size="sm">Search for shelf</Text>,
+                labels: { confirm: "Confirm", cancel: "Cancel" },
+                onCancel: () => console.log("Cancel"),
+                onConfirm: () =>
+                  // deleteShelfItem(props.bottle.shelfItem?.id || ""),
+                  console.log("Added to shelf"),
+              })
+            }
+          >
+            Add to Shelf
+          </Button>
+        )}
         {props.bottle.finished ? null : (
           <Button
             fullWidth

@@ -2,7 +2,6 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getSession, useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { Stash, Shelf, ShelfItem, Bottle, Prisma } from "@prisma/client";
-import type { Session } from "inspector";
 import { GetServerSideProps } from "next";
 import prisma from "../../../lib/prismadb";
 import Link from "next/link";
@@ -12,12 +11,10 @@ import { modals } from "@mantine/modals";
 import {
   Container,
   Button,
-  Grid,
   Group,
   Modal,
   Box,
   TextInput,
-  NumberInput,
   Table,
   ScrollArea,
   UnstyledButton,
@@ -248,40 +245,32 @@ const Brand: React.FC<Props> = (props) => {
   return (
     <Container>
       <Group justify="space-between" h="100%" pl="10px" pt="10px">
-        <h1>{props.brand.name}</h1>
-
-        <Button onClick={open}>Add Product</Button>
-        {props.brand.products.length === 0 ? (
-          <Button
-            onClick={() =>
-              modals.openConfirmModal({
-                title: "Delete Brand?",
-                children: <Text size="sm">This will remove this brand.</Text>,
-                labels: { confirm: "Confirm", cancel: "Cancel" },
-                onCancel: () => console.log("Cancel"),
-                onConfirm: () => (
-                  deleteBrand(props.brand.id || ""),
-                  console.log("Deleted brand ")
-                ),
-              })
-            }
-          >
-            Delete Brand
-          </Button>
-        ) : null}
+        <Group>
+          <h1>{props.brand.name}</h1>
+        </Group>
+        <Group>
+          <Button onClick={open}>Add Product</Button>
+          {props.brand.products.length === 0 ? (
+            <Button
+              color="red"
+              onClick={() =>
+                modals.openConfirmModal({
+                  title: "Delete Brand?",
+                  children: <Text size="sm">This will remove this brand.</Text>,
+                  labels: { confirm: "Confirm", cancel: "Cancel" },
+                  onCancel: () => console.log("Cancel"),
+                  onConfirm: () => (
+                    deleteBrand(props.brand.id || ""),
+                    console.log("Deleted brand ")
+                  ),
+                })
+              }
+            >
+              Delete Brand
+            </Button>
+          ) : null}
+        </Group>
       </Group>
-
-      {/* {props.brand.products.map((product, index) => (
-        <Link
-          style={{ textDecoration: "none" }}
-          href={`/products/${product.id}`}
-          key={product.id}
-        >
-          <Button fullWidth>
-            {product.vintage} {product.name}
-          </Button>
-        </Link>
-      ))} */}
 
       <ScrollArea>
         <TextInput
