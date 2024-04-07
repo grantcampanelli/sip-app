@@ -25,11 +25,11 @@ async function handleDELETE(res: NextApiResponse, req: NextApiRequest) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
-  const shelfItemId = req.query.id as string; // Fix: Ensure postId is of type string
+  const brandId = req.query.id as string; // Fix: Ensure postId is of type string
 
-  console.log("try to delete shelfItem: ", shelfItemId);
-  const result = await prisma.shelfItem.delete({
-    where: { id: shelfItemId },
+  console.log("try to delete brand: ", brandId);
+  const result = await prisma.brand.delete({
+    where: { id: brandId },
   });
   res.json(result);
 }

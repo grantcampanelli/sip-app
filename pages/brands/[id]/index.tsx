@@ -7,6 +7,7 @@ import { GetServerSideProps } from "next";
 import prisma from "../../../lib/prismadb";
 import Link from "next/link";
 import Router from "next/router";
+import { modals } from "@mantine/modals";
 
 import {
   Container,
@@ -94,6 +95,14 @@ type Props = {
   brand: BrandWithFullData;
   productFlatRowData: ProductFlatRow[];
 };
+
+async function deleteBrand(id: string): Promise<void> {
+  await fetch(`/api/brands/${id}`, {
+    method: "DELETE",
+  });
+  Router.push("/brands");
+  // Router.reload();
+}
 
 const Brand: React.FC<Props> = (props) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -242,6 +251,24 @@ const Brand: React.FC<Props> = (props) => {
         <h1>{props.brand.name}</h1>
 
         <Button onClick={open}>Add Product</Button>
+        {props.brand.products.length === 0 ? (
+          <Button
+            onClick={() =>
+              modals.openConfirmModal({
+                title: "Delete Brand?",
+                children: <Text size="sm">This will remove this brand.</Text>,
+                labels: { confirm: "Confirm", cancel: "Cancel" },
+                onCancel: () => console.log("Cancel"),
+                onConfirm: () => (
+                  deleteBrand(props.brand.id || ""),
+                  console.log("Deleted brand ")
+                ),
+              })
+            }
+          >
+            Delete Brand
+          </Button>
+        ) : null}
       </Group>
 
       {/* {props.brand.products.map((product, index) => (
