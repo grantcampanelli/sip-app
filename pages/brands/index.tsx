@@ -111,7 +111,7 @@ const Brands: React.FC<Props> = (props) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      await Router.push("/brands/");
+      await Router.reload();
       close();
     } catch (error) {
       console.error(error);

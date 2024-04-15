@@ -118,6 +118,7 @@ const Brand: React.FC<Props> = (props) => {
         name: form.values.name,
         vintage: form.values.vintage,
         varietal: form.values.varietal,
+        region: form.values.region,
         brandId: props.brand.id,
       };
       await fetch("/api/products", {
@@ -231,7 +232,7 @@ const Brand: React.FC<Props> = (props) => {
   };
 
   const rows = sortedData.map((row) => (
-    <Table.Tr key={row.name}>
+    <Table.Tr key={row.id}>
       <Table.Td>{row.name}</Table.Td>
       <Table.Td>{row.vintage}</Table.Td>
       <Table.Td>
@@ -351,6 +352,11 @@ const Brand: React.FC<Props> = (props) => {
               label="Vintage"
               placeholder="2016"
               {...form.getInputProps("vintage")}
+            />
+            <TextInput
+              label="Region"
+              placeholder="Napa Valley"
+              {...form.getInputProps("region")}
             />
             <TextInput
               withAsterisk
