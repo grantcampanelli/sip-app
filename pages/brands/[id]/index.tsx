@@ -108,6 +108,7 @@ const Brand: React.FC<Props> = (props) => {
       name: "",
       vintage: "",
       varietal: "",
+      region: "",
     },
   });
   const submitData = async (e: React.SyntheticEvent) => {
@@ -354,17 +355,16 @@ const Brand: React.FC<Props> = (props) => {
               {...form.getInputProps("vintage")}
             />
             <TextInput
-              label="Region"
-              placeholder="Napa Valley"
-              {...form.getInputProps("region")}
-            />
-            <TextInput
               withAsterisk
               label="Varietal"
               placeholder="Cabernet Sauvignon"
               {...form.getInputProps("varietal")}
             />
-
+            <TextInput
+              label="Region"
+              placeholder="Napa Valley"
+              {...form.getInputProps("region")}
+            />
             <Group justify="flex-end" mt="md">
               <Button type="submit" onClick={submitData}>
                 Submit
