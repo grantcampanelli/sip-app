@@ -61,7 +61,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   const usersBottlesComboBox = usersBottles.map((bottle) => {
-    return { value: bottle.id, label: bottle.product.name };
+    return {
+      value: bottle.id,
+      label:
+        bottle.product.brand.name +
+        " " +
+        bottle.product.name +
+        " " +
+        bottle.product.vintage,
+    };
   });
 
   return {

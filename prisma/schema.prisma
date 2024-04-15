@@ -13,6 +13,7 @@ model Product {
   name     String
   vintage  String
   varietal String
+  region   String?
   brandId  String
   bottles  Bottle[]
   brand    Brand    @relation(fields: [brandId], references: [id])
