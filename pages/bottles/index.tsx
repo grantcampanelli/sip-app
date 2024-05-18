@@ -8,7 +8,8 @@ import { Prisma } from "@prisma/client";
 import Link from "next/link";
 
 // mantine imports
-import { Container, Button, Grid, Group } from "@mantine/core";
+import {Container, Button, Grid, Group, Card, CardSection, Center, Text} from "@mantine/core";
+import {IconBottle} from "@tabler/icons-react";
 
 type BottleWithFullData = Prisma.BottleGetPayload<{
   include: {
@@ -73,25 +74,77 @@ const Bottles: React.FC<Props> = (props) => {
 
       </Group>
 
-      <Grid>
+      <Container>
         {props.bottles
           .filter(function (bottle) {
             return bottle.finished != true;
           })
           .map((bottle) => (
-            <Grid.Col span={{ base: 12, xs: 4 }} key={bottle.id}>
-              <Link
-                style={{ textDecoration: "none" }}
-                href={`/bottles/${bottle.id}`}
+          <Card
+           key={bottle.id}
+           shadow="sm"
+           padding="md"
+           radius="md"
+           pt={20}
+           mt={5}
+
+           // component={"a"}
+           // href={"/bottles/"+bottle.id}
+           withBorder
               >
-                <Button fullWidth>
-                  {bottle.product.brand.name} {bottle.product.name}{" "}
-                  {bottle.product.vintage}
-                </Button>
+            <Card.Section>
+              <Link
+                        style={{ textDecoration: "none" }}
+                        href={`/bottles/${bottle.id}`}
+                    >
+                <Text
+                    size="lg"
+                    fw={800}
+                    ta="left"
+                    pl={20}
+                    pr={20}
+                    variant="gradient"
+                    gradient={{ from: "red", to: "maroon", deg: 90 }}
+
+                >
+                  {bottle.product.brand.name} {bottle.product.name} {bottle.product.vintage}
+                </Text>
+                <Text
+                    size="sm"
+                    fw={800}
+                    ta="left"
+                    pl={20}
+                    pr={20}
+                    variant="gradient"
+                    gradient={{ from: "red", to: "maroon", deg: 90 }}>
+                  Purchase Date: {bottle.purchaseDate?.toLocaleDateString()}
+                </Text>
               </Link>
-            </Grid.Col>
+             </Card.Section>
+           </Card>
+
           ))}
-      </Grid>
+      </Container>
+
+      {/*<Grid>*/}
+      {/*  {props.bottles*/}
+      {/*      .filter(function (bottle) {*/}
+      {/*        return bottle.finished != true;*/}
+      {/*      })*/}
+      {/*      .map((bottle) => (*/}
+      {/*          <Grid.Col span={{ base: 12, xs: 4 }} key={bottle.id}>*/}
+      {/*            <Link*/}
+      {/*                style={{ textDecoration: "none" }}*/}
+      {/*                href={`/bottles/${bottle.id}`}*/}
+      {/*            >*/}
+      {/*              <Button fullWidth>*/}
+      {/*                {bottle.product.brand.name} {bottle.product.name}{" "}*/}
+      {/*                {bottle.product.vintage}*/}
+      {/*              </Button>*/}
+      {/*            </Link>*/}
+      {/*          </Grid.Col>*/}
+      {/*      ))}*/}
+      {/*</Grid>*/}
 
       {/*<Group justify="space-between" h="100%" pl="10px" pt="10px">*/}
       {/*  <h1>My Finished Bottles</h1>*/}
