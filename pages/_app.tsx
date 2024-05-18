@@ -24,7 +24,11 @@ export default function App({
       <Analytics />
 
       <SessionProvider session={session}>
-        <MantineProvider>
+        <MantineProvider
+        theme={{
+            primaryColor: "red",
+            }}
+        >
           <ModalsProvider>
             <Header />
             <Component {...pageProps} />
