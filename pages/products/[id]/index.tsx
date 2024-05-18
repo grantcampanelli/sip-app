@@ -1,6 +1,6 @@
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
-import { Product, Prisma } from "@prisma/client";
+import { Product} from "@prisma/client";
 import { GetServerSideProps } from "next";
 import prisma from "../../../lib/prismadb";
 import Router from "next/router";
@@ -8,7 +8,6 @@ import Router from "next/router";
 import {
   Container,
   Button,
-  Grid,
   Group,
   Modal,
   Box,
@@ -111,7 +110,7 @@ const ProductPage: React.FC<Props> = (props) => {
       <p>Varietal: {props.product.varietal}</p>
 
       <Modal opened={opened} onClose={close} title="Add Product">
-        <Box maw={340} mx="auto">
+        <Box>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
             <NumberInput
               withAsterisk
@@ -133,12 +132,14 @@ const ProductPage: React.FC<Props> = (props) => {
             />
             <DateTimePicker
               withAsterisk
+              dropdownType="modal"
               label="Purchase Date"
               placeholder="Pick a date"
               {...form.getInputProps("purchaseDate")}
             />
             <DateTimePicker
               label="Open Date"
+              dropdownType="modal"
               placeholder="Pick a date"
               {...form.getInputProps("openDate")}
             />
