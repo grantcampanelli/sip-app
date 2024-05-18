@@ -7,7 +7,7 @@ import {
   Drawer,
   ScrollArea,
   rem,
-  useMantineTheme,
+  useMantineTheme, Center, Loader,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "../styles/HeaderMenu.module.css";
@@ -17,23 +17,31 @@ import Image from "next/image";
 import Link from "next/link";
 
 const SignedIn = () => {
-  const { data: session } = useSession();
+  const {data: session, status: loading} = useSession();
+
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
-  const theme = useMantineTheme();
+  // const theme = useMantineTheme();
+
+  if(loading === 'loading') {
+    return (
+   <></>
+    )}
+
   if (session) {
     return (
       <>
         <Group h="100%" gap={0} visibleFrom="sm">
-          <Link href="/brands" className={classes.link}>
-            Browse
-          </Link>
+
           <Link href="/bottles" className={classes.link}>
             My Bottles
           </Link>
           <Link href="/stashes" className={classes.link}>
             My Stashes
+          </Link>
+          <Link href="/brands" className={classes.link}>
+            Brands
           </Link>
           <Button onClick={() => signOut()}>Log Out</Button>
         </Group>
@@ -51,13 +59,7 @@ const SignedIn = () => {
         >
           <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
             <Divider my="sm" />
-            <Link
-              href="/brands"
-              className={classes.link}
-              onClick={toggleDrawer}
-            >
-              Browse
-            </Link>
+
             <Link
               href="/bottles"
               className={classes.link}
@@ -72,7 +74,13 @@ const SignedIn = () => {
             >
               My Stashes
             </Link>
-
+            <Link
+                href="/brands"
+                className={classes.link}
+                onClick={toggleDrawer}
+            >
+              Brands
+            </Link>
             <Divider my="sm" />
             <Button fullWidth onClick={() => signOut()}>
               Log Out
@@ -101,16 +109,15 @@ const Header = () => {
   return (
     <Box pb={10}>
       <header className={classes.header}>
-        <Group justify="space-between" h="100%" pl="10px" pt="10px">
+        <Group justify="space-between" h="100%" pl="20px" pt="20px">
           <Link href="/">
             <Image
               src="/SipLogoNoBg.png"
               width={100}
               height={100}
-              alt="Sip Logo"
+              alt="Sippin Logo"
             />
           </Link>
-
           <SignedIn />
         </Group>
       </header>

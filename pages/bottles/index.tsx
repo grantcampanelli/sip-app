@@ -59,7 +59,18 @@ const Bottles: React.FC<Props> = (props) => {
   return (
     <Container>
       <Group justify="space-between" h="100%" pl="10px" pt="10px">
-        <h1>My Unfinished Bottles</h1>
+        <Group>
+          <h1>My Bottles</h1>
+        </Group>
+        <Group>
+          {/*<Link href="/bottles/create">*/}
+          {/*  <Button>Add Bottle</Button>*/}
+          {/*</Link>*/}
+          <Link href="/bottles/history">
+            <Button>View History</Button>
+          </Link>
+        </Group>
+
       </Group>
 
       <Grid>
@@ -82,29 +93,29 @@ const Bottles: React.FC<Props> = (props) => {
           ))}
       </Grid>
 
-      <Group justify="space-between" h="100%" pl="10px" pt="10px">
-        <h1>My Finished Bottles</h1>
-      </Group>
+      {/*<Group justify="space-between" h="100%" pl="10px" pt="10px">*/}
+      {/*  <h1>My Finished Bottles</h1>*/}
+      {/*</Group>*/}
 
-      <Grid>
-        {props.bottles
-          .filter(function (bottle) {
-            return bottle.finished == true;
-          })
-          .map((bottle) => (
-            <Grid.Col span={{ base: 12, xs: 4 }} key={bottle.id}>
-              <Link
-                style={{ textDecoration: "none" }}
-                href={`/bottles/${bottle.id}`}
-              >
-                <Button fullWidth>
-                  {bottle.product.brand.name} {bottle.product.name}{" "}
-                  {bottle.product.vintage}
-                </Button>
-              </Link>
-            </Grid.Col>
-          ))}
-      </Grid>
+      {/*<Grid>*/}
+      {/*  {props.bottles*/}
+      {/*    .filter(function (bottle) {*/}
+      {/*      return bottle.finished == true;*/}
+      {/*    })*/}
+      {/*    .map((bottle) => (*/}
+      {/*      <Grid.Col span={{ base: 12, xs: 4 }} key={bottle.id}>*/}
+      {/*        <Link*/}
+      {/*          style={{ textDecoration: "none" }}*/}
+      {/*          href={`/bottles/${bottle.id}`}*/}
+      {/*        >*/}
+      {/*          <Button fullWidth>*/}
+      {/*            {bottle.product.brand.name} {bottle.product.name}{" "}*/}
+      {/*            {bottle.product.vintage}*/}
+      {/*          </Button>*/}
+      {/*        </Link>*/}
+      {/*      </Grid.Col>*/}
+      {/*    ))}*/}
+      {/*</Grid>*/}
     </Container>
   );
 };
