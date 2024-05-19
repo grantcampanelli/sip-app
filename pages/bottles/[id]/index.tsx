@@ -170,13 +170,19 @@ const BottlePage: React.FC<Props> = (props) => {
             fullWidth
             onClick={() =>
               modals.openConfirmModal({
-                title: "Which shelf do you want to add it to?",
-                children: <Text size="sm">Search for shelf</Text>,
+                title: "Under Construction...",
+                children: <Text size="sm">You can add bottles to the shelves from the shelves directly</Text>,
                 labels: { confirm: "Confirm", cancel: "Cancel" },
                 onCancel: () => console.log("Cancel"),
-                onConfirm: () =>
-                  // deleteShelfItem(props.bottle.shelfItem?.id || ""),
-                  console.log("Added to shelf"),
+                onConfirm: () => console.log("Confirm")
+
+                // title: "Which shelf do you want to add it to?",
+                // children: <Text size="sm">Search for shelf</Text>,
+                // labels: { confirm: "Confirm", cancel: "Cancel" },
+                // onCancel: () => console.log("Cancel"),
+                // onConfirm: () =>
+                //   // deleteShelfItem(props.bottle.shelfItem?.id || ""),
+                //   console.log("Added to shelf"),
               })
             }
           >
@@ -207,7 +213,7 @@ const BottlePage: React.FC<Props> = (props) => {
             Mark Finished
           </Button>
         )}
-        <Button fullWidth>Edit</Button>
+        {/*<Button fullWidth>Edit</Button>*/}
       </Group>
     </Container>
   );
