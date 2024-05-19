@@ -7,20 +7,19 @@ import Router from "next/router";
 import {
     Container,
     Button,
-    Input,
-    Textarea,
-    Box,
+    Text,
     TextInput,
     NumberInput,
-    Checkbox,
     Group,
     Select,
-    ComboboxData, Autocomplete,
-    Stepper, Code, PasswordInput
+    Stepper,
+    ComboboxData,
 } from "@mantine/core";
 import {useForm} from "@mantine/form";
-import type {Bottle, Product, Brand} from "@prisma/client";
-import {DateTimePicker} from "@mantine/dates";
+import type {Product, Brand} from "@prisma/client";
+import {DatePickerInput} from "@mantine/dates";
+import {IconCurrencyDollar, IconPlus} from '@tabler/icons-react';
+import '@mantine/dates/styles.css';
 
 export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
     const session = await getServerSession(req, res, authOptions);
@@ -42,31 +41,35 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
 
     const productsDb: Product[] = await prisma.product.findMany({});
     const productComboBox = productsDb.map((product) => {
-        return {value: product.id, label: product.name};
+        return {
+            value: product.id,
+            label: product.name + " (Brand: " + brandsDb.filter((brand) => {
+                return brand.id === product.brandId;
+            })[0].name + ")" };
     });
 
     return {
-        props: {brandComboBox, productComboBox},
+        props: {brandComboBox, productComboBox, productsDb},
     };
 };
 
 type Props = {
-    //   brands: Brand[];
     brandComboBox: ComboboxData;
     productComboBox: ComboboxData;
+    productsDb: Product[];
 };
-var productsFiltered: ComboboxData = [];
+// var productsFiltered: ComboboxData = [];
 
 const CreateBottleForm: React.FC<Props> = (props) => {
-    var productsFiltered: ComboboxData = props.productComboBox;
+    let productsFiltered: ComboboxData = props.productComboBox;
 
     const [active, setActive] = useState(0);
 
     const form = useForm({
         // mode: 'uncontrolled',
         initialValues: {
-            productId: '',
-            brandId: '',
+            product: '',
+            brand: '',
             size: 25,
             servingSize: 9,
             purchasePrice: 19.99,
@@ -80,41 +83,45 @@ const CreateBottleForm: React.FC<Props> = (props) => {
 
         validate: (values) => {
             if (active === 0) {
+                // if(values.brand === undefined) {return {brand: 'Brand must be selected'}}
+
                 return {
-                    // username:
-                    //     values.username.trim().length < 6
-                    //         ? 'Username must include at least 6 characters'
-                    //         : null,
-                    // password:
-                    //     values.password.length < 6 ? 'Password must include at least 6 characters' : null,
+                    brand:
+                        values.brand === '' ? 'Brand must be selected' : null,
                 };
             }
 
             if (active === 1) {
-                return {
-                    // name: values.name.trim().length < 2 ? 'Name must include at least 2 characters' : null,
-                    // email: /^\S+@\S+$/.test(values.email) ? null : 'Invalid email',
-                };
-            }
+                if(values.product === '') {return {product: 'Product must be selected'}}
+                else {
+                    let specificBrand = props.productsDb.filter((product) => {
+                        return product.id === values.product;
+                    })[0];
+                    if (specificBrand !== undefined) {
+                        let specificBrandId = specificBrand.brandId;
+                        return {
+                            product: values.brand != specificBrandId ? 'Product must be from the selected brand' : null,
+                        };
+                    }
+                }
 
+            }
             return {};
         },
-
-      onValuesChange: (values) => {
-             // updateProductList(values.brandId);
-           console.log("values: ", values);
-           },
-
-
     });
 
-    form.watch('name', ({ previousValue, value, touched, dirty }) => {
-        console.log({ previousValue, value, touched, dirty });
+    form.watch('brand', ({previousValue, value, touched, dirty}) => {
+
+        const products = props.productsDb.filter((product) => {
+            return product.brandId === value;
+        });
+        productsFiltered = products.map((productFilt) => {
+            return {value: productFilt.id, label: productFilt.name};
+        });
+        if (previousValue !== value) {
+            form.setValues({product: ""});
+        }
     });
-    // form.watch((values) => {console.log("try")});
-
-
-
 
     const nextStep = () =>
         setActive((current) => {
@@ -126,76 +133,108 @@ const CreateBottleForm: React.FC<Props> = (props) => {
 
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
+    const addBottle = async (e: React.SyntheticEvent) => {
+        e.preventDefault();
+
+        try {
+            const body = {
+                size: form.values.size,
+                servingSize: form.values.servingSize,
+                purchasePrice: form.values.purchasePrice,
+                purchaseDate: form.values.purchaseDate,
+                openDate: form.values.openDate,
+                finished: false,
+                finishDate: null,
+                amountRemaining: 100.0,
+                notes: form.values.notes,
+                productId: form.values.product,
+                brandId: form.values.brand,
+            };
+            await fetch("/api/bottles", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(body),
+            });
+            // need to return back to right fridge page
+            const url = "/bottles/";
+            await Router.push(url);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     return (
         <>
             <Container>
                 <Stepper active={active}>
                     <Stepper.Step label="Pick Brand" description="First Step">
-                        <Select
+                            <Select
                             label="Brand"
-                            placeholder="Justin"
-                            limit={5}
+                            key={"brand"}
+                            withAsterisk
+                            placeholder="Start typing..."
+                            limit={10}
                             data={props.brandComboBox}
                             searchable
-                            {...form.getInputProps("brandId")}
+                            {...form.getInputProps("brand")}
                         />
+
                     </Stepper.Step>
 
                     <Stepper.Step label="Pick Product" description="Second Step">
                         <Select
                             label="Product"
-                            placeholder="Isoceles"
+                            key={"product"}
+                            withAsterisk
+                            placeholder="Start typing..."
                             limit={5}
                             data={productsFiltered}
                             searchable
-                            {...form.getInputProps("productId")}
+                            {...form.getInputProps("product")}
                         />
                     </Stepper.Step>
 
                     <Stepper.Step label="Purchase Information" description="Third Step">
+                        {/*<NumberInput*/}
+                        {/*    withAsterisk*/}
+                        {/*    label="Size in Ounces"*/}
+                        {/*    placeholder="25"*/}
+                        {/*    {...form.getInputProps("size")}*/}
+                        {/*/>*/}
+                        {/*<NumberInput*/}
+                        {/*    withAsterisk*/}
+                        {/*    label="Serving Size in Ounces"*/}
+                        {/*    placeholder="9"*/}
+                        {/*    {...form.getInputProps("servingSize")}*/}
+                        {/*/>*/}
                         <NumberInput
                             withAsterisk
-                            label="Size in Ounces"
-                            placeholder="25"
-                            {...form.getInputProps("size")}
-                        />
-                        <NumberInput
-                            withAsterisk
-                            label="Serving Size in Ounces"
-                            placeholder="9"
-                            {...form.getInputProps("servingSize")}
-                        />
-                        <NumberInput
-                            withAsterisk
+                            leftSection={<IconCurrencyDollar/>}
                             label="Purchase Price"
                             placeholder="20.00"
                             {...form.getInputProps("purchasePrice")}
                         />
-                        <DateTimePicker
+                        <DatePickerInput
                             withAsterisk
-                            dropdownType="modal"
                             label="Purchase Date"
                             placeholder="Pick a date"
                             {...form.getInputProps("purchaseDate")}
                         />
-                        <DateTimePicker
-                            label="Open Date"
-                            dropdownType="modal"
-                            placeholder="Pick a date"
-                            {...form.getInputProps("openDate")}
-                        />
+                        {/*<DateTimePicker*/}
+                        {/*    label="Open Date"*/}
+                        {/*    dropdownType="modal"*/}
+                        {/*    placeholder="Pick a date"*/}
+                        {/*    {...form.getInputProps("openDate")}*/}
+                        {/*/>*/}
                         <TextInput
-                            withAsterisk
                             label="Notes"
                             placeholder="This is a great wine"
                             {...form.getInputProps("notes")}
                         />
                     </Stepper.Step>
                     <Stepper.Completed>
-                        Completed! Form values:
-                        {/*<Code block mt="xl">*/}
-                        {/*  {JSON.stringify(form.getValues(), null, 2)}*/}
-                        {/*</Code>*/}
+                        <Text>Loading...</Text>
                     </Stepper.Completed>
                 </Stepper>
 
@@ -205,7 +244,10 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                             Back
                         </Button>
                     )}
-                    {active !== 3 && <Button onClick={nextStep}>Next step</Button>}
+                    {active === 0 && <Button color="green" component="a" href={"/brands"}><IconPlus/>Brand</Button>}
+                    {active === 1 && <Button color="green" component="a" href={`/brands/${form.values.brand}`}><IconPlus/>Product</Button>}
+                    {active !== 2 && <Button onClick={nextStep}>Next step</Button>}
+                    {active === 2 && <Button onClick={addBottle}>Add Bottle</Button>}
                 </Group>
             </Container>
         </>

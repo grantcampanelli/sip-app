@@ -17,6 +17,10 @@ import {
 import { DateTimePicker } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
+import {IconCurrencyDollar} from "@tabler/icons-react";
+import React from "react";
+import '@mantine/dates/styles.css';
+
 
 export const getServerSideProps: GetServerSideProps = async ({
   req,
@@ -112,20 +116,21 @@ const ProductPage: React.FC<Props> = (props) => {
       <Modal opened={opened} onClose={close} title="Add Product">
         <Box>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            {/*<NumberInput*/}
+            {/*  withAsterisk*/}
+            {/*  label="Size in Ounces"*/}
+            {/*  placeholder="25"*/}
+            {/*  {...form.getInputProps("size")}*/}
+            {/*/>*/}
+            {/*<NumberInput*/}
+            {/*  withAsterisk*/}
+            {/*  label="Serving Size in Ounces"*/}
+            {/*  placeholder="9"*/}
+            {/*  {...form.getInputProps("servingSize")}*/}
+            {/*/>*/}
             <NumberInput
               withAsterisk
-              label="Size in Ounces"
-              placeholder="25"
-              {...form.getInputProps("size")}
-            />
-            <NumberInput
-              withAsterisk
-              label="Serving Size in Ounces"
-              placeholder="9"
-              {...form.getInputProps("servingSize")}
-            />
-            <NumberInput
-              withAsterisk
+              leftSection={<IconCurrencyDollar/>}
               label="Purchase Price"
               placeholder="20.00"
               {...form.getInputProps("purchasePrice")}
@@ -137,14 +142,13 @@ const ProductPage: React.FC<Props> = (props) => {
               placeholder="Pick a date"
               {...form.getInputProps("purchaseDate")}
             />
-            <DateTimePicker
-              label="Open Date"
-              dropdownType="modal"
-              placeholder="Pick a date"
-              {...form.getInputProps("openDate")}
-            />
+            {/*<DateTimePicker*/}
+            {/*  label="Open Date"*/}
+            {/*  dropdownType="modal"*/}
+            {/*  placeholder="Pick a date"*/}
+            {/*  {...form.getInputProps("openDate")}*/}
+            {/*/>*/}
             <TextInput
-              withAsterisk
               label="Notes"
               placeholder="This is a great wine"
               {...form.getInputProps("notes")}
