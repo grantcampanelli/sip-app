@@ -119,9 +119,11 @@ const Stashes: React.FC<Props> = (props) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      const url = "/stashes/" + props.stash.id;
-      await Router.push(url);
-      close();
+      // const url = "/stashes/" + props.stash.id;
+      // await Router.push(url);
+      // close();
+      Router.reload();
+
     } catch (error) {
       console.error(error);
     }

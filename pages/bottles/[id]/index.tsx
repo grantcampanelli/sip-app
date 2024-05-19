@@ -101,7 +101,6 @@ async function deleteShelfItem(id: string): Promise<void> {
   });
   Router.reload();
 
-  // Router.push("/");
 }
 
 async function markBottleAsfinished(id: string): Promise<void> {

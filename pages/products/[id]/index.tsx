@@ -94,9 +94,11 @@ const ProductPage: React.FC<Props> = (props) => {
         body: JSON.stringify(body),
       });
       // need to return back to right fridge page
-      const url = "/bottles/";
-      await Router.push(url);
-      close();
+      Router.reload();
+
+      // const url = "/bottles/";
+      // await Router.push(url);
+      // close();
     } catch (error) {
       console.error(error);
     }
