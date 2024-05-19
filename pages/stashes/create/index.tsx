@@ -44,6 +44,7 @@ const CreateStashForm: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+
       await Router.push("/stashes");
       console.log("submitData function");
     } catch (error) {

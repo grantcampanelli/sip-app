@@ -129,7 +129,7 @@ const Brand: React.FC<Props> = (props) => {
       });
       // need to return back to right fridge page
       const url = "/brands/" + props.brand.id;
-      await Router.push(url);
+      Router.reload();
       close();
     } catch (error) {
       console.error(error);
