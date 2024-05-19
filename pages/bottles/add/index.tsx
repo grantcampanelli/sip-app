@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
     const productComboBox = productsDb.map((product) => {
         return {
             value: product.id,
-            label: product.name + " (Brand: " + brandsDb.filter((brand) => {
+            label: product.name + " "+ product.vintage+ " (Brand: " + brandsDb.filter((brand) => {
                 return brand.id === product.brandId;
             })[0].name + ")" };
     });
