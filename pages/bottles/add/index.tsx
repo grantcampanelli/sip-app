@@ -43,9 +43,8 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
     const productComboBox = productsDb.map((product) => {
         return {
             value: product.id,
-            label: product.name + " "+ product.vintage+ " (Brand: " + brandsDb.filter((brand) => {
-                return brand.id === product.brandId;
-            })[0].name + ")" };
+            label: product.name + " "+ product.vintage
+        };
     });
 
     return {
@@ -156,7 +155,6 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body),
             });
-            // need to return back to right fridge page
             const url = "/bottles/";
             await Router.push(url);
         } catch (error) {
