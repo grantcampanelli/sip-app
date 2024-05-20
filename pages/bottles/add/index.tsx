@@ -61,7 +61,8 @@ type Props = {
 // var productsFiltered: ComboboxData = [];
 
 const CreateBottleForm: React.FC<Props> = (props) => {
-    let productsFiltered: ComboboxData = props.productComboBox;
+    // let productsFiltered: ComboboxData = props.productComboBox;
+    const [productsFiltered, setProductsFiltered] = useState(props.productComboBox);
 
     const [active, setActive] = useState(0);
 
@@ -83,8 +84,6 @@ const CreateBottleForm: React.FC<Props> = (props) => {
 
         validate: (values) => {
             if (active === 0) {
-                // if(values.brand === undefined) {return {brand: 'Brand must be selected'}}
-
                 return {
                     brand:
                         values.brand === '' ? 'Brand must be selected' : null,
@@ -115,9 +114,11 @@ const CreateBottleForm: React.FC<Props> = (props) => {
         const products = props.productsDb.filter((product) => {
             return product.brandId === value;
         });
-        productsFiltered = products.map((productFilt) => {
-            return {value: productFilt.id, label: productFilt.name};
+        let newProductsFiltered = products.map((productFilt) => {
+            return {value: productFilt.id, label: productFilt.name +" "+ productFilt.vintage};
         });
+        setProductsFiltered(newProductsFiltered);
+        console.log("productsFiltered: ", productsFiltered);
         if (previousValue !== value) {
             form.setValues({product: ""});
         }
