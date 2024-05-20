@@ -8,6 +8,8 @@ import prisma from "../../../../lib/prismadb";
 import Link from "next/link";
 import Router from "next/router";
 import { modals } from "@mantine/modals";
+import '@mantine/dates/styles.css';
+
 
 import {
     Container,
@@ -22,6 +24,8 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
+import {DateTimePicker} from "@mantine/dates";
+import React from "react";
 
 type BottleWithFullData = Prisma.BottleGetPayload<{
     include: {
@@ -100,7 +104,36 @@ const BottlePage: React.FC<Props> = (props) => {
         // mode: 'uncontrolled',
         initialValues: {
             purchasePrice: props.bottle.purchasePrice,
+            notes: props.bottle.notes,
+            purchaseDate: props.bottle.purchaseDate,
+            amountRemaining: props.bottle.amountRemaining,
         },
+        // validate: (values) => {
+        //     if (active === 0) {
+        //         return {
+        //             brand:
+        //                 values.brand === '' ? 'Brand must be selected' : null,
+        //         };
+        //     }
+        //
+        //     if (active === 1) {
+        //         if(values.product === '') {return {product: 'Product must be selected'}}
+        //         else {
+        //             let specificBrand = props.productsDb.filter((product) => {
+        //                 return product.id === values.product;
+        //             })[0];
+        //             if (specificBrand !== undefined) {
+        //                 let specificBrandId = specificBrand.brandId;
+        //                 return {
+        //                     product: values.brand != specificBrandId ? 'Product must be from the selected brand' : null,
+        //                 };
+        //             }
+        //         }
+        //
+        //     }
+        //     if (values.amountRemaining < 0) {
+        //     return {};
+        // },
     });
 
     return (
@@ -111,15 +144,53 @@ const BottlePage: React.FC<Props> = (props) => {
                     : null}{" "}
                 {props.bottle.product.name}
             </h1>
-            <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            <form onSubmit={form.onSubmit((values) =>
+                {
+                    console.log("submitting form", values);
+                    fetch(`/api/bottles/${props.bottle.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(values),
+                    }).then((res) => {
+                        if (res.ok) {
+                            Router.push(`/bottles/${props.bottle.id}`);
+                        }
+                    });
+                }
+            )}>
 
-                <TextInput
+                <NumberInput
                     label="Purchase Price"
                     key={"purchasePrice"}
                     value={props.bottle.purchasePrice || 0}
+                    {...form.getInputProps("purchasePrice")}
                 />
+                <TextInput
+                    label="Notes"
+                    key={"notes"}
+                    value={props.bottle.notes || ""}
+                    {...form.getInputProps("notes")}/>
+                <DateTimePicker
+                    withAsterisk
+                    dropdownType="modal"
+                    label="Purchase Date"
+                    placeholder="Pick a date"
+                    {...form.getInputProps("purchaseDate")}
+                />
+                <NumberInput
+                    label="Amount Remaining"
+                    key={"amountRemaining"}
+                    value={props.bottle.amountRemaining || 0}
+                    {...form.getInputProps("amountRemaining")}
+                />
+
                 <Group justify="flex-end" mt="md">
-                    <Button>Cancel</Button>
+                    <Button
+                    component={"a"}
+                    href={`/bottles/${props.bottle.id}`}
+                    >Cancel</Button>
                     <Button type="submit">Save</Button>
                 </Group>
             </form>
