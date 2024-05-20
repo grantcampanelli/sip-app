@@ -1,8 +1,8 @@
-import {authOptions} from "pages/api/auth/[...nextauth]";
-import {getServerSession} from "next-auth";
-import {Product} from "@prisma/client";
-import {GetServerSideProps} from "next";
-import prisma from "../../../lib/prismadb";
+import { authOptions } from "pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
+import { Product} from "@prisma/client";
+import { GetServerSideProps } from "next";
+import prisma from "../../../../lib/prismadb";
 import Router from "next/router";
 
 import {
@@ -14,9 +14,9 @@ import {
     TextInput,
     NumberInput,
 } from "@mantine/core";
-import {DateTimePicker} from "@mantine/dates";
-import {useDisclosure} from "@mantine/hooks";
-import {useForm} from "@mantine/form";
+import { DateTimePicker } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
 import {IconCurrencyDollar} from "@tabler/icons-react";
 import React from "react";
 import '@mantine/dates/styles.css';
@@ -58,7 +58,7 @@ type Props = {
 };
 
 const ProductPage: React.FC<Props> = (props) => {
-    const [opened, {open, close}] = useDisclosure(false);
+    const [opened, { open, close }] = useDisclosure(false);
     const form = useForm({
         initialValues: {
             size: 25,
@@ -90,7 +90,7 @@ const ProductPage: React.FC<Props> = (props) => {
             };
             await fetch("/api/bottles", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
             });
             // need to return back to right fridge page
@@ -110,16 +110,13 @@ const ProductPage: React.FC<Props> = (props) => {
                 <h1>
                     {props.product.vintage} {props.product.name}
                 </h1>
-                <Group>
-                    <Button onClick={open}>Add To My Bottles</Button>
-                    <Button
-                        component={"a"}
-                        href={`/products/${props.product.id}/edit`}
-                    >Edit</Button>
-                </Group>
+
+                <Button
+                    component={"a"}
+                    href={`/products/${props.product.id}`}
+                >Cancel</Button>
             </Group>
             <p>Varietal: {props.product.varietal}</p>
-
 
             <Modal opened={opened} onClose={close} title="Add Product">
                 <Box>
