@@ -83,8 +83,6 @@ const CreateBottleForm: React.FC<Props> = (props) => {
 
         validate: (values) => {
             if (active === 0) {
-                // if(values.brand === undefined) {return {brand: 'Brand must be selected'}}
-
                 return {
                     brand:
                         values.brand === '' ? 'Brand must be selected' : null,
