@@ -167,11 +167,6 @@ const BottlePage: React.FC<Props> = (props) => {
                     value={props.bottle.purchasePrice || 0}
                     {...form.getInputProps("purchasePrice")}
                 />
-                <TextInput
-                    label="Notes"
-                    key={"notes"}
-                    value={props.bottle.notes || ""}
-                    {...form.getInputProps("notes")}/>
                 <DateTimePicker
                     withAsterisk
                     dropdownType="modal"
@@ -179,13 +174,18 @@ const BottlePage: React.FC<Props> = (props) => {
                     placeholder="Pick a date"
                     {...form.getInputProps("purchaseDate")}
                 />
+                <TextInput
+                    label="Notes"
+                    key={"notes"}
+                    value={props.bottle.notes || ""}
+                    {...form.getInputProps("notes")}/>
+
                 <NumberInput
                     label="Amount Remaining"
                     key={"amountRemaining"}
                     value={props.bottle.amountRemaining || 0}
                     {...form.getInputProps("amountRemaining")}
                 />
-
                 <Group justify="flex-end" mt="md">
                     <Button
                     component={"a"}

@@ -18,7 +18,7 @@ import {
     Modal,
     Box,
     TextInput,
-    NumberInput,
+    NumberInput, Card,
 } from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import {useForm} from "@mantine/form";
@@ -110,15 +110,127 @@ async function markBottleAsfinished(id: string): Promise<void> {
     Router.reload();
 }
 
+
 const BottlePage: React.FC<Props> = (props) => {
+
+    const bottleActionButtons = ({bottleId, shelfItemId, isFinished}: {
+        bottleId: string,
+        shelfItemId: string,
+        isFinished: boolean
+    }) => {
+        if (isFinished) {
+            return (
+                <Button
+
+                    component={Link}
+                    href={`/bottles/${props.bottle.id}/edit`}
+                >
+                    Edit</Button>
+            )
+        }
+
+
+    }
+
+    const removeFromShelf = ({shelfItemId}: { shelfItemId: string }) => {
+        return (<Button
+            onClick={() =>
+                modals.openConfirmModal({
+                    title: "Do you want to remove this bottle from your stash?",
+                    children: (
+                        <Text size="sm">
+                            This will remove this bottle from your shelf, but it will
+                            not mark it as finished.
+                        </Text>
+                    ),
+                    labels: {confirm: "Confirm", cancel: "Cancel"},
+                    onCancel: () => console.log("Cancel"),
+                    onConfirm: () => (
+                        deleteShelfItem(shelfItemId),
+                            console.log("Deleted shelf item ")
+                    ),
+                })
+            }
+        >
+            Remove from Shelf
+        </Button>)
+    }
+
+    const addToShelf = ({bottleId}: { bottleId: string }) => {
+        return (<Button
+
+            onClick={() =>
+                modals.openConfirmModal({
+                    title: "Under Construction...",
+                    children: <Text size="sm">You can add bottles to the shelves from the shelves
+                        directly</Text>,
+                    labels: {confirm: "Confirm", cancel: "Cancel"},
+                    onCancel: () => console.log("Cancel"),
+                    onConfirm: () => console.log("Confirm")
+
+                    // title: "Which shelf do you want to add it to?",
+                    // children: <Text size="sm">Search for shelf</Text>,
+                    // labels: { confirm: "Confirm", cancel: "Cancel" },
+                    // onCancel: () => console.log("Cancel"),
+                    // onConfirm: () =>
+                    //   // deleteShelfItem(props.bottle.shelfItem?.id || ""),
+                    //   console.log("Added to shelf"),
+                })
+            }
+        >
+            Add to Shelf
+        </Button>)
+    }
+
     return (
         <Container>
-            <h1>
-                {props.bottle.product.brand.type == "WINE"
-                    ? props.bottle.product.vintage
-                    : null}{" "}
-                {props.bottle.product.name}
-            </h1>
+            <Group justify={"space-between"}>
+                <h1>
+                    {props.bottle.product.brand.type == "WINE"
+                        ? props.bottle.product.vintage
+                        : null}{" "}
+                    {props.bottle.product.name}
+                </h1>
+                <Group>
+
+
+                    {props.bottle.shelfItem && !props.bottle.finished ? (
+                        removeFromShelf({shelfItemId: props.bottle.shelfItem?.id || ""})
+                    ) : null}
+                    {!props.bottle.shelfItem && !props.bottle.finished ? (
+                        addToShelf({bottleId: props.bottle.id || ""})
+                    ) : null}
+                    {props.bottle.finished ? null : (
+                        <Button
+                            onClick={() =>
+                                modals.openConfirmModal({
+                                    title: "Do you want to make this bottle as finished?",
+                                    children: (
+                                        <Text size="sm">
+                                            This will mark the bottle as finished. You should have
+                                            already removed it from the shelf.
+                                        </Text>
+                                    ),
+                                    labels: {confirm: "Confirm", cancel: "Cancel"},
+                                    onCancel: () => console.log("Cancel"),
+                                    onConfirm: () => (
+                                        markBottleAsfinished(props.bottle.id || ""),
+                                            console.log("Marked bottle as finished")
+                                    ),
+                                })
+                            }
+                        >
+                            Mark Finished
+                        </Button>
+                    )}
+                    <Button component={Link} href={`/bottles/${props.bottle.id}/edit`}>Edit</Button>
+                    {props.bottle.finished ? (
+                        <Button component={Link} href={`/bottles/history`}>All Finished Bottles</Button>
+                    ) : <Button component={Link} href={`/bottles/`}>Back</Button>}
+
+                </Group>
+            </Group>
+
             <Text>
                 {props.bottle.shelfItem ? (
                     <p>
@@ -131,102 +243,12 @@ const BottlePage: React.FC<Props> = (props) => {
                     </p>
                 ) : null}
             </Text>
-            <p>
-                <strong>Purchase Price:</strong> ${props.bottle.purchasePrice}
-            </p>
-            <p>
-                <strong>Purchase Date:</strong> {props.bottle.purchaseDate?.toLocaleDateString()}
-            </p>
-            {props.bottle.finished ? (
-                <p>
-                    <strong>Finished Date:</strong> {String(props.bottle.finishDate)}
-                </p>
-            ) : null}
-            <strong>Notes:</strong>
-            <p>{props.bottle.notes}</p>
-            <h3>Actions:</h3>
-            <Group>
-                {props.bottle.shelfItem ? (
-                    <Button
-                        fullWidth
-                        onClick={() =>
-                            modals.openConfirmModal({
-                                title: "Do you want to remove this bottle from your stash?",
-                                children: (
-                                    <Text size="sm">
-                                        This will remove this bottle from your shelf, but it will
-                                        not mark it as finished.
-                                    </Text>
-                                ),
-                                labels: {confirm: "Confirm", cancel: "Cancel"},
-                                onCancel: () => console.log("Cancel"),
-                                onConfirm: () => (
-                                    deleteShelfItem(props.bottle.shelfItem?.id || ""),
-                                        console.log("Deleted shelf item ")
-                                ),
-                            })
-                        }
-                    >
-                        Remove from Shelf
-                    </Button>
-                ) : (
-                    <Button
-                        fullWidth
-                        onClick={() =>
-                            modals.openConfirmModal({
-                                title: "Under Construction...",
-                                children: <Text size="sm">You can add bottles to the shelves from the shelves
-                                    directly</Text>,
-                                labels: {confirm: "Confirm", cancel: "Cancel"},
-                                onCancel: () => console.log("Cancel"),
-                                onConfirm: () => console.log("Confirm")
 
-                                // title: "Which shelf do you want to add it to?",
-                                // children: <Text size="sm">Search for shelf</Text>,
-                                // labels: { confirm: "Confirm", cancel: "Cancel" },
-                                // onCancel: () => console.log("Cancel"),
-                                // onConfirm: () =>
-                                //   // deleteShelfItem(props.bottle.shelfItem?.id || ""),
-                                //   console.log("Added to shelf"),
-                            })
-                        }
-                    >
-                        Add to Shelf
-                    </Button>
-                )}
-                {props.bottle.finished ? null : (
-                    <Button
-                        fullWidth
-                        onClick={() =>
-                            modals.openConfirmModal({
-                                title: "Do you want to make this bottle as finished?",
-                                children: (
-                                    <Text size="sm">
-                                        This will mark the bottle as finished. You should have
-                                        already removed it from the shelf.
-                                    </Text>
-                                ),
-                                labels: {confirm: "Confirm", cancel: "Cancel"},
-                                onCancel: () => console.log("Cancel"),
-                                onConfirm: () => (
-                                    markBottleAsfinished(props.bottle.id || ""),
-                                        console.log("Marked bottle as finished")
-                                ),
-                            })
-                        }
-                    >
-                        Mark Finished
-                    </Button>
-                )}
-{/*<Link href={`/bottles/${props.bottle.id}/edit`}> textD*/}
-                <Button
-                    fullWidth
-                    component={Link}
-                    href={`/bottles/${props.bottle.id}/edit`}
-                >
-                    Edit</Button>
-
-            </Group>
+            <p><strong>Purchase Price:</strong> ${props.bottle.purchasePrice}</p>
+            <p><strong>Purchase Date:</strong> {props.bottle.purchaseDate?.toLocaleDateString()}</p>
+            <p><strong>Notes: </strong>{props.bottle.notes}</p>
+            <p><strong>Amount Remaining:</strong> {props.bottle.amountRemaining}%</p>
+            {props.bottle.finished ? (<p><strong>Finished Date:</strong> {String(props.bottle.finishDate)}</p>) : null}
         </Container>
     );
 };

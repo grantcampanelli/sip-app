@@ -64,7 +64,7 @@ const Bottles: React.FC<Props> = (props) => {
                 </Group>
                 <Group>
                     <Link href="/bottles">
-                        <Button>Back</Button>
+                        <Button>Unfinished Bottles</Button>
                     </Link>
                 </Group>
 
