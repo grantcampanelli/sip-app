@@ -27,6 +27,7 @@ import { useForm } from "@mantine/form";
 import {DateTimePicker} from "@mantine/dates";
 import React from "react";
 
+
 type BottleWithFullData = Prisma.BottleGetPayload<{
     include: {
         product: {
@@ -188,7 +189,7 @@ const BottlePage: React.FC<Props> = (props) => {
                 />
                 <Group justify="flex-end" mt="md">
                     <Button
-                    component={"a"}
+                    component={Link}
                     href={`/bottles/${props.bottle.id}`}
                     >Cancel</Button>
                     <Button type="submit">Save</Button>

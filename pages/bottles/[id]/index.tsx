@@ -2,7 +2,6 @@ import {authOptions} from "pages/api/auth/[...nextauth]";
 import {getSession, useSession} from "next-auth/react";
 import {getServerSession} from "next-auth";
 import {Bottle, Product, Brand, Prisma} from "@prisma/client";
-import type {Session} from "inspector";
 import {GetServerSideProps} from "next";
 import prisma from "../../../lib/prismadb";
 import Link from "next/link";
@@ -12,16 +11,10 @@ import {modals} from "@mantine/modals";
 import {
     Container,
     Button,
-    Grid,
     Group,
-    Text,
-    Modal,
-    Box,
-    TextInput,
-    NumberInput, Card,
+    Text, ActionIcon,
 } from "@mantine/core";
-import {useDisclosure} from "@mantine/hooks";
-import {useForm} from "@mantine/form";
+import {IconCircleArrowLeft} from '@tabler/icons-react';
 
 type BottleWithFullData = Prisma.BottleGetPayload<{
     include: {
@@ -186,6 +179,13 @@ const BottlePage: React.FC<Props> = (props) => {
         <Container>
             <Group justify={"space-between"}>
                 <h1>
+                    <ActionIcon
+                        component={Link}
+                        href={props.bottle.finished ? ("/bottles/history") : ("/bottles/")}
+                        mr={5}
+                    >
+                    <IconCircleArrowLeft/>
+                    </ActionIcon>
                     {props.bottle.product.brand.type == "WINE"
                         ? props.bottle.product.vintage
                         : null}{" "}
@@ -224,9 +224,6 @@ const BottlePage: React.FC<Props> = (props) => {
                         </Button>
                     )}
                     <Button component={Link} href={`/bottles/${props.bottle.id}/edit`}>Edit</Button>
-                    {props.bottle.finished ? (
-                        <Button component={Link} href={`/bottles/history`}>All Finished Bottles</Button>
-                    ) : <Button component={Link} href={`/bottles/`}>Back</Button>}
 
                 </Group>
             </Group>

@@ -13,6 +13,7 @@ import {
     Group,
     Select,
     Stepper,
+    Modal,
     ComboboxData,
 } from "@mantine/core";
 import {useForm} from "@mantine/form";
@@ -20,6 +21,8 @@ import type {Product, Brand} from "@prisma/client";
 import {DatePickerInput} from "@mantine/dates";
 import {IconCurrencyDollar, IconPlus} from '@tabler/icons-react';
 import '@mantine/dates/styles.css';
+import {useDisclosure} from "@mantine/hooks";
+
 
 export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
     const session = await getServerSession(req, res, authOptions);
@@ -57,16 +60,12 @@ type Props = {
     productComboBox: ComboboxData;
     productsDb: Product[];
 };
-// var productsFiltered: ComboboxData = [];
 
 const CreateBottleForm: React.FC<Props> = (props) => {
-    // let productsFiltered: ComboboxData = props.productComboBox;
     const [productsFiltered, setProductsFiltered] = useState(props.productComboBox);
 
     const [active, setActive] = useState(0);
-
     const form = useForm({
-        // mode: 'uncontrolled',
         initialValues: {
             product: '',
             brand: '',
@@ -123,16 +122,6 @@ const CreateBottleForm: React.FC<Props> = (props) => {
         }
     });
 
-    const nextStep = () =>
-        setActive((current) => {
-            if (form.validate().hasErrors) {
-                return current;
-            }
-            return current < 3 ? current + 1 : current;
-        });
-
-    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-
     const addBottle = async (e: React.SyntheticEvent) => {
         e.preventDefault();
 
@@ -162,6 +151,140 @@ const CreateBottleForm: React.FC<Props> = (props) => {
         }
     };
 
+    const [opened, { open, close }] = useDisclosure(false);
+
+    const newBrandForm = useForm({
+        initialValues: {
+            brandName: "",
+            type: "WINE",
+        }
+    });
+
+    const saveNewBrand = async () => {
+        try {
+            const body = {
+                name: newBrandForm.values.brandName,
+                type: newBrandForm.values.type,
+            };
+            await fetch("/api/brands", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(body),
+            });
+            Router.reload();
+            close();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const newBrandModal = () => {
+        return (
+            <>
+                <TextInput
+                    withAsterisk
+                    key={"brandName"}
+                    label="Name"
+                    placeholder="Justin"
+                    {...newBrandForm.getInputProps("brandName")}
+                />
+                <Select
+                    withAsterisk
+                    key={"brandType"}
+                    label="Type"
+                    placeholder="Select type"
+                    value={newBrandForm.values.type}
+                    data={[
+                        { label: "Wine", value: "WINE" },
+                        { label: "Spirits", value: "SPIRIT" },
+                        { label: "Beer", value: "BEER" },
+                    ]}
+                    {...newBrandForm.getInputProps("type")}
+                />
+                <Button fullWidth onClick={() => saveNewBrand()} mt="md">
+                    Submit
+                </Button>
+            </>
+        );
+    };
+
+    const newProductForm = useForm({
+        initialValues: {
+            productName: "",
+            productVintage: "2024",
+            productVarietal: "",
+            productRegion: "",
+        }
+    });
+
+    const saveNewProduct = async () => {
+        try {
+            const body = {
+                name: newProductForm.values.productName,
+                vintage: newProductForm.values.productVintage,
+                varietal: newProductForm.values.productVarietal,
+                region: newProductForm.values.productRegion,
+                brandId: form.values.brand,
+            };
+            await fetch("/api/products", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(body),
+            });
+            Router.reload();
+            close();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // create a new product modal
+    const newProductModal = () => {
+        return (
+            <>
+                <TextInput
+                    withAsterisk
+                    key={"productName"}
+                    label="Name"
+                    placeholder="Justin"
+                    {...newProductForm.getInputProps("productName")}
+                />
+                <TextInput
+                    withAsterisk
+                    key={"productVintage"}
+                    label="Year"
+                    placeholder="2024"
+                    {...newProductForm.getInputProps("productVintage")}
+                />
+                <TextInput
+                    key={"productVarietal"}
+                    label="Varietal"
+                    placeholder="Chardonnay"
+                    {...newProductForm.getInputProps("productVarietal")}
+                />
+                <TextInput
+                    key={"productRegion"}
+                    label="Region"
+                    placeholder="Napa Valley"
+                    {...newProductForm.getInputProps("productRegion")}
+                />
+                <Button fullWidth onClick={() => saveNewProduct()} mt="md">
+                    Submit
+                </Button>
+            </>
+        );
+    };
+
+    // Code to step through the UI Stepper
+    const nextStep = () =>
+        setActive((current) => {
+            if (form.validate().hasErrors) {
+                return current;
+            }
+            return current < 3 ? current + 1 : current;
+        });
+
+    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
     return (
         <>
@@ -195,18 +318,6 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                     </Stepper.Step>
 
                     <Stepper.Step label="Purchase Information" description="Third Step">
-                        {/*<NumberInput*/}
-                        {/*    withAsterisk*/}
-                        {/*    label="Size in Ounces"*/}
-                        {/*    placeholder="25"*/}
-                        {/*    {...form.getInputProps("size")}*/}
-                        {/*/>*/}
-                        {/*<NumberInput*/}
-                        {/*    withAsterisk*/}
-                        {/*    label="Serving Size in Ounces"*/}
-                        {/*    placeholder="9"*/}
-                        {/*    {...form.getInputProps("servingSize")}*/}
-                        {/*/>*/}
                         <NumberInput
                             withAsterisk
                             leftSection={<IconCurrencyDollar/>}
@@ -220,12 +331,6 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                             placeholder="Pick a date"
                             {...form.getInputProps("purchaseDate")}
                         />
-                        {/*<DateTimePicker*/}
-                        {/*    label="Open Date"*/}
-                        {/*    dropdownType="modal"*/}
-                        {/*    placeholder="Pick a date"*/}
-                        {/*    {...form.getInputProps("openDate")}*/}
-                        {/*/>*/}
                         <TextInput
                             label="Notes"
                             placeholder="This is a great wine"
@@ -243,11 +348,18 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                             Back
                         </Button>
                     )}
-                    {active === 0 && <Button color="green" component="a" href={"/brands"}><IconPlus/>Brand</Button>}
-                    {active === 1 && <Button color="green" component="a" href={`/brands/${form.values.brand}`}><IconPlus/>Product</Button>}
+
+                    {active === 0 && <Button color="green" onClick={open}><IconPlus/>Brand</Button>}
+                    {active === 1 && <Button color="green" onClick={open}><IconPlus/>Product</Button>}
                     {active !== 2 && <Button onClick={nextStep}>Next step</Button>}
                     {active === 2 && <Button onClick={addBottle}>Add Bottle</Button>}
                 </Group>
+
+                <Modal opened={opened} onClose={close} title={active === 0 ? "Add New Brand" : "Add New Product"}>
+                    {active === 0 ? newBrandModal() : null}
+                    {active === 1 ? newProductModal() : null}
+                </Modal>
+
             </Container>
         </>
     );
