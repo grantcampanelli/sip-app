@@ -230,7 +230,7 @@ const BottlePage: React.FC<Props> = (props) => {
                     {!props.bottle.shelfItem && !props.bottle.finished ? (
                         addToShelf({bottleId: props.bottle.id || ""})
                     ) : null}
-                    {props.bottle.finished ? null : (
+                    {!props.bottle.shelfItem && !props.bottle.finished ? (
                         <Button
                             onClick={() =>
                                 modals.openConfirmModal({
@@ -252,7 +252,7 @@ const BottlePage: React.FC<Props> = (props) => {
                         >
                             Mark Finished
                         </Button>
-                    )}
+                    ) : null}
                     <Button component={Link} href={`/bottles/${props.bottle.id}/edit`}>Edit</Button>
                     {props.bottle.shelfItem ? null : (openDeleteModal({bottleId: props.bottle.id || ""}))}
 
