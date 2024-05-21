@@ -14,7 +14,7 @@ import {
     Group,
     Text, ActionIcon,
 } from "@mantine/core";
-import {IconCircleArrowLeft} from '@tabler/icons-react';
+import {IconCircleArrowLeft, IconTrash} from '@tabler/icons-react';
 
 type BottleWithFullData = Prisma.BottleGetPayload<{
     include: {
@@ -103,6 +103,14 @@ async function markBottleAsfinished(id: string): Promise<void> {
     Router.reload();
 }
 
+async function deleteBottle(id: string): Promise<void> {
+    await fetch(`/api/bottles/${id}`, {
+        method: "DELETE",
+    });
+    Router.push("/bottles");
+    // Router.reload();
+}
+
 
 const BottlePage: React.FC<Props> = (props) => {
 
@@ -175,6 +183,28 @@ const BottlePage: React.FC<Props> = (props) => {
         </Button>)
     }
 
+    const openDeleteModal = ({bottleId}: { bottleId: string }) => {
+        return (<Button
+            onClick={() =>
+                modals.openConfirmModal({
+                    title: "Do you want to delete this bottle?",
+                    children: (
+                        <Text size="sm">
+                            This cannot be undone.
+                        </Text>
+                    ),
+                    labels: {confirm: "Confirm", cancel: "Cancel"},
+                    onCancel: () => console.log("Cancel"),
+                    onConfirm: () => (
+                        deleteBottle(bottleId),
+                            console.log("Deleted Bottle")
+                    ),
+                })
+            }
+        >
+            <IconTrash/> </Button>)
+    }
+
     return (
         <Container>
             <Group justify={"space-between"}>
@@ -184,7 +214,7 @@ const BottlePage: React.FC<Props> = (props) => {
                         href={props.bottle.finished ? ("/bottles/history") : ("/bottles/")}
                         mr={5}
                     >
-                    <IconCircleArrowLeft/>
+                        <IconCircleArrowLeft/>
                     </ActionIcon>
                     {props.bottle.product.brand.type == "WINE"
                         ? props.bottle.product.vintage
@@ -224,6 +254,7 @@ const BottlePage: React.FC<Props> = (props) => {
                         </Button>
                     )}
                     <Button component={Link} href={`/bottles/${props.bottle.id}/edit`}>Edit</Button>
+                    {props.bottle.shelfItem ? null : (openDeleteModal({bottleId: props.bottle.id || ""}))}
 
                 </Group>
             </Group>
