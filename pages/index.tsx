@@ -126,7 +126,7 @@ export default function Page() {
                   ta="center"
                   variant="gradient"
                   gradient={{from: 'red', to: 'maroon', deg: 90}}
-              >Know what you're sippin!</Text>
+              >Know what you are sippin!</Text>
 
               <Text size="md"
                     fw={800}
