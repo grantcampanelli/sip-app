@@ -120,21 +120,35 @@ export default function Page() {
       return (
           <>
             <Container>
+              <Text
+                  size="lg"
+                  fw={800}
+                  ta="center"
+                  variant="gradient"
+                  gradient={{from: 'red', to: 'maroon', deg: 90}}
+              >Know what you're sippin!</Text>
 
-              <Grid>
-                <Grid.Col span={{base: 12, xs: 4}}>
-                  <Image src="/images/beer-fridge-animated.png" alt="Beer Fridge"/>
-                </Grid.Col>
-                <Grid.Col span={{base: 12, xs: 4}}>
-                  <Image
-                      src="/images/whiskey-cabinet-animated.png"
-                      alt="Whiskey Cabinet"
-                  />
-                </Grid.Col>
-                <Grid.Col span={{base: 12, xs: 4}}>
-                  <Image src="/images/wine-fridge-animated.png" alt="Wine Fridge"/>
-                </Grid.Col>
-              </Grid>
+              <Text size="md"
+                    fw={800}
+                    ta="center"
+                    variant="gradient"
+                    gradient={{from: 'red', to: 'maroon', deg: 90}}
+              >Login to start tracking your bottles</Text>
+
+              {/*<Grid>*/}
+              {/*  <Grid.Col span={{base: 12, xs: 4}}>*/}
+              {/*    <Image src="/images/beer-fridge-animated.png" alt="Beer Fridge"/>*/}
+              {/*  </Grid.Col>*/}
+              {/*  <Grid.Col span={{base: 12, xs: 4}}>*/}
+              {/*    <Image*/}
+              {/*        src="/images/whiskey-cabinet-animated.png"*/}
+              {/*        alt="Whiskey Cabinet"*/}
+              {/*    />*/}
+              {/*  </Grid.Col>*/}
+              {/*  <Grid.Col span={{base: 12, xs: 4}}>*/}
+              {/*    <Image src="/images/wine-fridge-animated.png" alt="Wine Fridge"/>*/}
+              {/*  </Grid.Col>*/}
+              {/*</Grid>*/}
             </Container>
           </>
       )
