@@ -10,16 +10,19 @@ import Link from "next/link";
 // mantine imports
 import {
     Container,
-    Button,
     Group,
     Card,
-    CardSection,
     Text,
     TextInput,
     rem,
-    keys
+    keys, ActionIcon, Tooltip, Menu
 } from "@mantine/core";
-import {IconSearch} from "@tabler/icons-react";
+import {
+    IconSearch,
+    IconAdjustmentsHorizontal,
+    IconSquarePlus,
+    IconHistory,
+} from "@tabler/icons-react";
 import {useState} from "react";
 
 type BottleWithFullData = Prisma.BottleGetPayload<{
@@ -38,6 +41,7 @@ type BottleFlatRow = {
     brandName: string;
     purchaseDate: string;
     year: string;
+    type: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
@@ -73,7 +77,8 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
             bottleName: bottle.product.name,
             brandName: bottle.product.brand.name,
             purchaseDate: bottle.purchaseDate?.toLocaleDateString() || '',
-            year: bottle.product.vintage.toString()
+            year: bottle.product.vintage.toString(),
+            type: bottle.product.brand.type,
         };
     });
 
@@ -94,6 +99,7 @@ const Bottles: React.FC<Props> = (props) => {
         brandName: string;
         purchaseDate: string;
         year: string;
+        type: string;
     }
 
     function filterData(data: BottleRowData[], search: string) {
@@ -142,6 +148,20 @@ const Bottles: React.FC<Props> = (props) => {
             sortData(props.bottleFlatRowData, {sortBy: field, reversed, search})
         );
     };
+
+    const filterBottleTypeTo = (type: string) => {
+
+        if(type == "NONE"){
+            setSortedData(props.bottleFlatRowData);
+            return;
+        }
+        else {
+            const filteredData = props.bottleFlatRowData.filter((bottle) => bottle.type === type);
+            setSortedData(filteredData);
+            return;
+        }
+
+    }
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {value} = event.currentTarget;
@@ -202,19 +222,16 @@ const Bottles: React.FC<Props> = (props) => {
                     <h1>My Bottles</h1>
                 </Group>
                 <Group>
-                    <Link href="/bottles/add">
-                        <Button>Add Bottle</Button>
-                    </Link>
-                    <Link href="/bottles/history">
-                        <Button>View History</Button>
-                    </Link>
+                    <Tooltip label={"Add Bottle"} position={"left"}><ActionIcon color={"green"} component={Link} href="/bottles/add"> <IconSquarePlus/></ActionIcon></Tooltip>
+                    <Tooltip label={"View History"} position={"left"}><ActionIcon component={Link} href="/bottles/history"> <IconHistory/></ActionIcon></Tooltip>
                 </Group>
 
             </Group>
             <Container>
+                <Group justify="space-between" gap="xs" >
                 <TextInput
                     placeholder="Search by any field"
-                    mb="md"
+
                     leftSection={
                         <IconSearch
                             style={{width: rem(16), height: rem(16)}}
@@ -224,6 +241,22 @@ const Bottles: React.FC<Props> = (props) => {
                     value={search}
                     onChange={handleSearchChange}
                 />
+                    <Menu shadow="md" width={200}>
+                        <Menu.Target>
+                            <ActionIcon>
+                                <IconAdjustmentsHorizontal/>
+                            </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                            <Menu.Item onClick={() => filterBottleTypeTo("WINE")}>Filter to Wine</Menu.Item>
+                            <Menu.Item onClick={() => filterBottleTypeTo("BEER")}>Filter to Beer</Menu.Item>
+                            <Menu.Item onClick={() => filterBottleTypeTo("SPIRIT")}>Filter to Spirit</Menu.Item>
+                            <Menu.Item onClick={() => filterBottleTypeTo("NONE")}>Clear Filter</Menu.Item>
+
+                        </Menu.Dropdown>
+                    </Menu>
+                </Group>
+
             </Container>
             <Container>
                 {rows.map((row) => (

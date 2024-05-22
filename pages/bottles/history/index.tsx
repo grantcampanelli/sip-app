@@ -8,7 +8,8 @@ import { Prisma } from "@prisma/client";
 import Link from "next/link";
 
 // mantine imports
-import {Container, Button, Grid, Group, Card, Text} from "@mantine/core";
+import {Container, Button, Grid, Group, Card, Text, ActionIcon} from "@mantine/core";
+import {IconCircleArrowLeft} from "@tabler/icons-react";
 
 type BottleWithFullData = Prisma.BottleGetPayload<{
     include: {
@@ -58,17 +59,22 @@ type Props = {
 const Bottles: React.FC<Props> = (props) => {
     return (
         <Container>
-            <Group justify="space-between" h="100%" pl="10px" pt="10px">
-                <Group>
+                <Group justify={"flex-start"}>
+                    <ActionIcon
+                        component={Link}
+                        href={"/bottles/"}
+                        mr={5}
+                    >
+                        <IconCircleArrowLeft/>
+                    </ActionIcon>
                     <h1>Finished Bottles</h1>
                 </Group>
-                <Group>
-                    <Link href="/bottles">
-                        <Button>Unfinished Bottles</Button>
-                    </Link>
-                </Group>
+                {/*<Group>*/}
+                {/*    <Link href="/bottles">*/}
+                {/*        <Button>Unfinished Bottles</Button>*/}
+                {/*    </Link>*/}
+                {/*</Group>*/}
 
-            </Group>
 
             {/*<Grid>*/}
             {/*    {props.bottles*/}
