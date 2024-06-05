@@ -261,6 +261,7 @@ const BottlePage: React.FC<Props> = (props) => {
                         component={Link}
                         href={props.bottle.finished ? ("/bottles/history") : ("/bottles/")}
                         mr={5}
+                        size={"lg"}
                     >
                         <IconCircleArrowLeft/>
                     </ActionIcon>
@@ -272,7 +273,7 @@ const BottlePage: React.FC<Props> = (props) => {
                 <Group>
                     <Menu shadow="md" width={200}>
                         <Menu.Target>
-                            <ActionIcon>
+                            <ActionIcon size={"lg"}>
                                 <IconDotsCircleHorizontal/>
                             </ActionIcon>
                         </Menu.Target>
