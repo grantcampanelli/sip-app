@@ -88,13 +88,14 @@ const ShelfItems: React.FC<Props> = (props) => {
                         component={Link}
                         href={`/stashes/${props.shelf.stashId}`}
                         mr={5}
+                        size={"lg"}
                     >
                         <IconCircleArrowLeft/>
                     </ActionIcon>
                     <h1>{props.shelf.name}</h1>
                 </Group>
 
-                <Tooltip label={"Add Bottle"} position={"left"}><ActionIcon color={"green"} component={Link}
+                <Tooltip label={"Add Bottle"} position={"left"}><ActionIcon color={"green"} size={"lg"} component={Link}
                                                                             href={`/shelves/${props.shelf.id}/addBottle`}>
                     <IconSquarePlus/></ActionIcon></Tooltip>
             </Group>

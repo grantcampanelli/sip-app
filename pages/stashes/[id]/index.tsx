@@ -5,7 +5,7 @@ import {GetServerSideProps} from "next";
 import prisma from "lib/prismadb";
 import Link from "next/link";
 import Router from "next/router";
-import {ActionIcon, Card, Divider, rem, Text} from "@mantine/core";
+import {ActionIcon, Card, Divider, Menu, rem, Text} from "@mantine/core";
 
 
 import {
@@ -22,7 +22,8 @@ import {
 import {useDisclosure} from "@mantine/hooks";
 import {useForm} from "@mantine/form";
 import {useState} from "react";
-import {IconCircleArrowLeft} from "@tabler/icons-react";
+import {IconCircleArrowLeft, IconDotsCircleHorizontal, IconSquarePlus} from "@tabler/icons-react";
+import {modals} from "@mantine/modals";
 
 
 type ShelfWithFullData = Prisma.ShelfGetPayload<{
@@ -135,13 +136,26 @@ const Stashes: React.FC<Props> = (props) => {
                     component={Link}
                     href={`/stashes/`}
                     mr={5}
+                    size={"lg"}
                 >
                     <IconCircleArrowLeft/>
                 </ActionIcon>
                 <h1>{props.stash.name}</h1>
                 </Group>
-
-                <Button onClick={open}>Create Shelf</Button>
+                <Group>
+                    <Menu shadow="md">
+                        <Menu.Target>
+                            <ActionIcon
+                            size="lg"
+                            >
+                                <IconDotsCircleHorizontal/>
+                            </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                            <Menu.Item leftSection={<IconSquarePlus/>} onClick={open}> Add Shelf</Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>
+                </Group>
             </Group>
 
             {props.shelves

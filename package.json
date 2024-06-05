@@ -24,7 +24,6 @@
     "@mantine/spotlight": "^7.9.2",
     "@mantine/tiptap": "^7.9.2",
     "@next-auth/prisma-adapter": "^1.0.7",
-    "@next/font": "13.1.6",
     "@prisma/client": "^4.16.2",
     "@tabler/icons-react": "^2.47.0",
     "@tiptap/extension-link": "^2.4.0",
