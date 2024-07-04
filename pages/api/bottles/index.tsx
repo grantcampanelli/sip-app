@@ -1,9 +1,7 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import prisma from "../../../lib/prismadb";
-import { getSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "pages/api/auth/[...nextauth]";
-// import { getUserId } from '../../lib/nextAuth';
 
 export default async function handle(
   req: NextApiRequest,
@@ -57,7 +55,7 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
     return;
   }
 
-  const result = await prisma.bottle.create({
+  const result  = await prisma.bottle.create({
     data: {
       size: size,
       servingSize: servingSize,
