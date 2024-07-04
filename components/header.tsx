@@ -43,7 +43,10 @@ const SignedIn = () => {
           <Link href="/brands" className={classes.link}>
             Brands
           </Link>
-          <Button onClick={() => signOut()}>Log Out</Button>
+          <Link href="/account" className={classes.link}>
+            Account
+          </Link>
+          {/*<Button onClick={() => signOut()}>Log Out</Button>*/}
         </Group>
 
         <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
@@ -81,10 +84,17 @@ const SignedIn = () => {
             >
               Brands
             </Link>
-            <Divider my="sm" />
-            <Button fullWidth onClick={() => signOut()}>
-              Log Out
-            </Button>
+            <Link
+                href="/account"
+                className={classes.link}
+                onClick={toggleDrawer}
+            >
+              Account
+            </Link>
+            {/*<Divider my="sm" />*/}
+            {/*<Button fullWidth onClick={() => signOut()}>*/}
+            {/*  Log Out*/}
+            {/*</Button>*/}
           </ScrollArea>
         </Drawer>
       </>

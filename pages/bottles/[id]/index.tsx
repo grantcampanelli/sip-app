@@ -1,7 +1,6 @@
 import {authOptions} from "pages/api/auth/[...nextauth]";
-import {getSession, useSession} from "next-auth/react";
 import {getServerSession} from "next-auth";
-import {Bottle, Product, Brand, Prisma} from "@prisma/client";
+import {Bottle, Prisma} from "@prisma/client";
 import {GetServerSideProps} from "next";
 import prisma from "../../../lib/prismadb";
 import Link from "next/link";
@@ -10,12 +9,13 @@ import {modals} from "@mantine/modals";
 
 import {
     Container,
-    Button,
     Group,
-    Text, ActionIcon, Tooltip, Menu
+    Text,
+    ActionIcon,
+    Menu,
+    Title
 } from "@mantine/core";
 import {
-    IconCircleArrowLeft,
     IconTrash,
     IconEdit,
     IconCheckbox,
@@ -256,20 +256,20 @@ const BottlePage: React.FC<Props> = (props) => {
     return (
         <Container>
             <Group justify={"space-between"}>
-                <h1>
-                    <ActionIcon
-                        component={Link}
-                        href={props.bottle.finished ? ("/bottles/history") : ("/bottles/")}
-                        mr={5}
-                        size={"lg"}
-                    >
-                        <IconCircleArrowLeft/>
-                    </ActionIcon>
+                <Title>
+                    {/*<ActionIcon*/}
+                    {/*    component={Link}*/}
+                    {/*    href={props.bottle.finished ? ("/bottles/history") : ("/bottles/")}*/}
+                    {/*    mr={5}*/}
+                    {/*    size={"lg"}*/}
+                    {/*>*/}
+                    {/*    <IconCircleArrowLeft/>*/}
+                    {/*</ActionIcon>*/}
                     {props.bottle.product.brand.type == "WINE"
                         ? props.bottle.product.vintage
                         : null}{" "}
                     {props.bottle.product.name}
-                </h1>
+                </Title>
                 <Group>
                     <Menu shadow="md" width={200}>
                         <Menu.Target>
