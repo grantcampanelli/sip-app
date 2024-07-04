@@ -2,23 +2,22 @@ import {authOptions} from "pages/api/auth/[...nextauth]";
 import {getServerSession} from "next-auth";
 import {GetServerSideProps} from "next";
 import prisma from "../../lib/prismadb";
-import {Bottle, User, Prisma, UserPayload} from "@prisma/client";
-import { useSession, signIn, signOut } from "next-auth/react";
+import {Prisma} from "@prisma/client";
+import { signOut } from "next-auth/react";
 
 import {
     Container,
     Group,
     Button,
-    Card,
-    Text,
-    TextInput,
-    rem,
-    keys, ActionIcon, Tooltip, Menu
 } from "@mantine/core";
 
 
 
-type UserWithFullData = Prisma.UserGetPayload<any>;
+type UserWithFullData = Prisma.UserGetPayload<{
+    include: {
+        accounts: true
+    }
+}>;
 
 export const getServerSideProps: GetServerSideProps = async ({
                                                                  req,
@@ -37,21 +36,23 @@ export const getServerSideProps: GetServerSideProps = async ({
         };
     }
     let userId: string = session.user.id;
-    let user: User | null = null;
+    let user: UserWithFullData | null = null;
     user =
         (await prisma.user.findUnique({
             where: {
                 id: userId,
             },
+            include: {
+                accounts: true
+            }
         })) || null;
-
     return {
         props: {user}
     };
 };
 
 type Props = {
-    user: User;
+    user: UserWithFullData;
     // bottles: BottleWithFullData[];
     // bottleFlatRowData: BottleFlatRow[];
 };
@@ -60,14 +61,15 @@ const Account: React.FC<Props> = (props) => {
 
     return (
         <Container>
-            <Group justify="space-between" h="100%" pl="10px" pt="10px">
+            <Group justify="space-between" h="100%">
                 <Group>
-                    <h1>User</h1>
-                    <h1>{props.user.email}</h1>
+                    <h2>{props.user.name}</h2>
+                </Group>
+                <Group>
                     <Button onClick={() => signOut()}>Log Out</Button>
-
                 </Group>
             </Group>
+            <h3>Email: {props.user.email}</h3>
         </Container>
     );
 };
