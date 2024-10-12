@@ -6,29 +6,33 @@ import type { Session } from "inspector";
 import { GetServerSideProps } from "next";
 import prisma from "lib/prismadb";
 import Link from "next/link";
-import { Container, Button, Grid, Group, Divider, Table } from "@mantine/core";
+import {
+    Container,
+    Button,
+    Grid,
+    Group,
+    Divider,
+    Table,
+    NumberInput,
+    TextInput,
+    ActionIcon,
+    Menu,
+    Card, Text, Modal, Box
+} from "@mantine/core";
 import { rem } from "@mantine/core";
 // import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { useListState } from "@mantine/hooks";
-import { IconGripVertical } from "@tabler/icons-react";
+import {useDisclosure, useListState} from "@mantine/hooks";
+import {IconCircleArrowLeft, IconDotsCircleHorizontal, IconGripVertical, IconSquarePlus} from "@tabler/icons-react";
 import classes from "/styles/DndTableHandle.module.css";
+import {useForm} from "@mantine/form";
+import Router from "next/router";
+import {DateTimePicker} from "@mantine/dates";
+import React from "react";
 
-type ShelfWithBottles = Prisma.ShelfGetPayload<{
+type ShelfWithItems = Prisma.ShelfGetPayload<{
     include: {
-        shelfItems: {
-            include: {
-                bottle: {
-                    include: {
-                        product: {
-                            include: {
-                                brand: true;
-                            };
-                        };
-                    };
-                };
-            };
-        };
+        shelfItems: true
     };
 }>;
 
@@ -39,6 +43,8 @@ export const getServerSideProps: GetServerSideProps = async ({
                                                              }) => {
     const session = await getServerSession(req, res, authOptions);
     let shelfId: string = Array.isArray(query.id) ? "" : query.id || "";
+    console.log("we are querying")
+    console.log("shelfId: ", shelfId)
     if (!session) {
         res.statusCode = 403;
 
@@ -49,26 +55,14 @@ export const getServerSideProps: GetServerSideProps = async ({
             },
         };
     }
-    let shelf: ShelfWithBottles | null = null;
+    let shelf: ShelfWithItems | null = null;
     shelf =
         (await prisma.shelf.findUnique({
             where: {
                 id: shelfId,
             },
             include: {
-                shelfItems: {
-                    include: {
-                        bottle: {
-                            include: {
-                                product: {
-                                    include: {
-                                        brand: true,
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
+                shelfItems: true,
             },
         })) || null;
 
@@ -80,93 +74,91 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 type Props = {
-    shelf: ShelfWithBottles;
+    shelf: ShelfWithItems;
 };
 
-const ShelfItems: React.FC<Props> = (props) => {
-    console.log("shelfItems props:", props);
-    const [state, handlers] = useListState(props.shelf.shelfItems);
+const ShelfEdit:React.FC<Props> = (props) => {
+        const [opened, {open, close}] = useDisclosure(false);
+        const form = useForm({
+            initialValues: {
+                id: props.shelf.id,
+                name: props.shelf.name,
+                order: props.shelf.order,
+                capacity: props.shelf.capacity,
+                temp: props.shelf.temp,
+                stashId: props.shelf.stashId,
+            },
+        });
+        const submitData = async (e: React.SyntheticEvent) => {
+            e.preventDefault();
 
-    const items = state.map((item, index) => (
-        <Draggable key={item.id} index={index} draggableId={item.id}>
-            {(provided) => (
-                <Table.Tr
-                    className={classes.item}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                >
-                    <Table.Td>
-                        <div
-                            className={classes.dragHandleTable}
-                            {...provided.dragHandleProps}
-                        >
-                            <IconGripVertical
-                                style={{ width: rem(18), height: rem(18) }}
-                                stroke={1.5}
-                            />
-                        </div>
-                    </Table.Td>
-                    <Table.Td>{item.bottle.product.name}</Table.Td>
-                    <Table.Td>
-                        {item.bottle.purchaseDate
-                            ? item.bottle.purchaseDate.toLocaleDateString()
-                            : null}
-                    </Table.Td>
-                    <Table.Td>
-                        <Link href={`/bottles/${item.bottle.id}`}>View</Link>
-                    </Table.Td>
-                </Table.Tr>
-            )}
-        </Draggable>
-    ));
+            try {
+                const body = {
+                    id: props.shelf.id,
+                    name: form.values.name,
+                    order: form.values.order,
+                    capacity: form.values.capacity,
+                    temp: form.values.temp,
+                    stashId: form.values.stashId,
+                };
+                console.log("trying to PUT")
+                await fetch(`/api/shelves/${props.shelf.id}`, {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(body),
+                })
+                    .then((res) => {
+                    if (res.ok) {
+                        Router.push(`/shelves/${props.shelf.id}`);
+                    }
+                })
+                ;
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
     return (
         <Container>
-            <Group justify="space-between" h="100%" pl="10px" pt="10px">
-                <h1>Shelf {props.shelf.order}</h1>
-
-                <Link
-                    href={`/shelves/${props.shelf.id}/addBottle`}
-                    style={{ textDecoration: "none" }}
-                >
-                    <Button>Add Bottle</Button>
-                </Link>
+            <Group justify="space-between" >
+                    <h1>{props.shelf.name}</h1>
             </Group>
 
-            <Table.ScrollContainer minWidth={420}>
-                <DragDropContext
-                    onDragEnd={({ destination, source }) =>
-                        handlers.reorder({
-                            from: source.index,
-                            to: destination?.index || 0,
-                        })
-                    }
-                >
-                    <Table>
-                        <Table.Thead>
-                            <Table.Tr>
-                                <Table.Th />
-                                <Table.Th> Name</Table.Th>
-                                <Table.Th>Purchase Date</Table.Th>
-                                <Table.Th>View</Table.Th>
-                            </Table.Tr>
-                        </Table.Thead>
-                        <Droppable droppableId="dnd-list" direction="vertical">
-                            {(provided) => (
-                                <Table.Tbody
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                >
-                                    {items}
-                                    {provided.placeholder}
-                                </Table.Tbody>
-                            )}
-                        </Droppable>
-                    </Table>
-                </DragDropContext>
-            </Table.ScrollContainer>
+                    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+                        <TextInput
+                            withAsterisk
+                            label="Name"
+                            placeholder="1st Shelf"
+                            {...form.getInputProps("name")}
+                        />
+                        <NumberInput
+                            withAsterisk
+                            label="Order"
+                            placeholder="1"
+                            {...form.getInputProps("order")}
+                        />
+                        <NumberInput
+                            withAsterisk
+                            label="Capacity"
+                            placeholder="5"
+                            {...form.getInputProps("capacity")}
+                        />
+                        <NumberInput
+                            withAsterisk
+                            label="Temperature"
+                            placeholder="55"
+                            {...form.getInputProps("temp")}
+                        />
+                        <Group justify="flex-end" mt="md">
+                            <Button type="submit" onClick={submitData}>
+                                Submit
+                            </Button>
+                        </Group>
+                    </form>
+
         </Container>
     );
-};
+    };
 
-export default ShelfItems;
+
+export default ShelfEdit;

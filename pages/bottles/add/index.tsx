@@ -71,6 +71,7 @@ const CreateBottleForm: React.FC<Props> = (props) => {
             brand: '',
             size: 25,
             servingSize: 9,
+            numberBottles: 1,
             purchasePrice: 19.99,
             purchaseDate: new Date(),
             openDate: null,
@@ -139,11 +140,13 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                 productId: form.values.product,
                 brandId: form.values.brand,
             };
-            await fetch("/api/bottles", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(body),
-            });
+            for(let i = 0; i < form.values.numberBottles; i++) {
+                await fetch("/api/bottles", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(body),
+                });
+            }
             const url = "/bottles/";
             await Router.push(url);
         } catch (error) {
@@ -318,6 +321,15 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                     </Stepper.Step>
 
                     <Stepper.Step label="Purchase Information" description="Third Step">
+                        <NumberInput
+                            withAsterisk
+                            // leftSection={<IconCurrencyDollar/>}
+                            min={1}
+                            label="How Many Bottles?"
+                            startValue={1}
+                            required={true}
+                            {...form.getInputProps("numberBottles")}
+                        />
                         <NumberInput
                             withAsterisk
                             leftSection={<IconCurrencyDollar/>}
