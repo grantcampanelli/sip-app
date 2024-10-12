@@ -9,7 +9,8 @@ export default async function handle(
 ) {
   if (req.method === "POST") {
     await handlePOST(res, req);
-  } else {
+  }
+  else {
     throw new Error(
       `The HTTP ${req.method} method is not supported at this route.`
     );
@@ -45,6 +46,8 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
   });
   res.json(result);
 }
+
+
 
 /*
 code that would be used to concurrently update the shelves, thinking for updating their orders

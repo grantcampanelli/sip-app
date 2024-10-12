@@ -257,18 +257,9 @@ const BottlePage: React.FC<Props> = (props) => {
         <Container>
             <Group justify={"space-between"}>
                 <Title>
-                    {/*<ActionIcon*/}
-                    {/*    component={Link}*/}
-                    {/*    href={props.bottle.finished ? ("/bottles/history") : ("/bottles/")}*/}
-                    {/*    mr={5}*/}
-                    {/*    size={"lg"}*/}
-                    {/*>*/}
-                    {/*    <IconCircleArrowLeft/>*/}
-                    {/*</ActionIcon>*/}
-                    {props.bottle.product.brand.type == "WINE"
+                    {props.bottle.product.brand.name} {props.bottle.product.name} {props.bottle.product.brand.type == "WINE"
                         ? props.bottle.product.vintage
                         : null}{" "}
-                    {props.bottle.product.name}
                 </Title>
                 <Group>
                     <Menu shadow="md" width={200}>

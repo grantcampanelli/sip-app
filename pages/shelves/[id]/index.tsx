@@ -7,7 +7,7 @@ import {GetServerSideProps} from "next";
 import prisma from "../../../lib/prismadb";
 import Link from "next/link";
 import {Container, Button, Grid, Group, Divider, Table, Card, Text, ActionIcon, Tooltip} from "@mantine/core";
-import {IconCircleArrowLeft, IconSquarePlus} from "@tabler/icons-react";
+import {IconCircleArrowLeft, IconEdit, IconSquarePlus} from "@tabler/icons-react";
 
 type ShelfWithBottles = Prisma.ShelfGetPayload<{
     include: {
@@ -95,9 +95,14 @@ const ShelfItems: React.FC<Props> = (props) => {
                     <h1>{props.shelf.name}</h1>
                 </Group>
 
+                <Group>
                 <Tooltip label={"Add Bottle"} position={"left"}><ActionIcon color={"green"} size={"lg"} component={Link}
                                                                             href={`/shelves/${props.shelf.id}/addBottle`}>
                     <IconSquarePlus/></ActionIcon></Tooltip>
+                <Tooltip label={"Edit Shelf"} position={"left"}><ActionIcon color={"yellow"} size={"lg"} component={Link}
+                                                                            href={`/shelves/${props.shelf.id}/edit`}>
+                    <IconEdit/></ActionIcon></Tooltip>
+                </Group>
             </Group>
             {props.shelf.shelfItems
 
@@ -126,7 +131,7 @@ const ShelfItems: React.FC<Props> = (props) => {
                                     gradient={{from: "red", to: "maroon", deg: 90}}
 
                                 >
-                                    {row.bottle.product.name} {row.bottle.product.vintage}
+                                    {row.bottle.product.brand.name} {row.bottle.product.name} {row.bottle.product.vintage}
                                 </Text>
                                 <Text
                                     size="sm"
