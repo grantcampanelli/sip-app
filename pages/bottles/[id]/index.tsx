@@ -6,6 +6,8 @@ import prisma from "../../../lib/prismadb";
 import Link from "next/link";
 import Router from "next/router";
 import {modals} from "@mantine/modals";
+import { useState, useEffect } from 'react'
+
 
 import {
     Container,
@@ -13,7 +15,7 @@ import {
     Text,
     ActionIcon,
     Menu,
-    Title
+    Title, Button
 } from "@mantine/core";
 import {
     IconTrash,
@@ -83,17 +85,19 @@ export const getServerSideProps: GetServerSideProps = async ({
                     },
                 },
             },
-        })) || null;
+        })
+        ) || null;
 
     return {
         props: {
-            bottle,
+            bottle
         },
     };
 };
 
 type Props = {
     bottle: BottleWithFullData;
+    chatData: String;
 };
 
 async function deleteShelfItem(id: string): Promise<void> {
@@ -118,7 +122,6 @@ async function deleteBottle(id: string): Promise<void> {
     Router.push("/bottles");
     // Router.reload();
 }
-
 
 const BottlePage: React.FC<Props> = (props) => {
 
@@ -253,13 +256,34 @@ const BottlePage: React.FC<Props> = (props) => {
             > Edit </Menu.Item>)
     }
 
+    const [data, setData] = useState(null)
+    const [isLoading, setLoading] = useState(true)
+
+    // Set promptText to the bottles name
+    const promptText = `${props.bottle.product.brand.name} ${props.bottle.product.name} ${props.bottle.product.vintage}`
+
+    useEffect(() => {
+        fetch('/api/chat',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({promptInput: promptText}),
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                setData(data)
+                setLoading(false)
+            })
+    }, [])
     return (
         <Container>
             <Group justify={"space-between"}>
                 <Title>
                     {props.bottle.product.brand.name} {props.bottle.product.name} {props.bottle.product.brand.type == "WINE"
-                        ? props.bottle.product.vintage
-                        : null}{" "}
+                    ? props.bottle.product.vintage
+                    : null}{" "}
                 </Title>
                 <Group>
                     <Menu shadow="md" width={200}>
@@ -303,6 +327,8 @@ const BottlePage: React.FC<Props> = (props) => {
             <p><strong>Notes: </strong>{props.bottle.notes}</p>
             <p><strong>Amount Remaining:</strong> {props.bottle.amountRemaining}%</p>
             {props.bottle.finished ? (<p><strong>Finished Date:</strong> {String(props.bottle.finishDate)}</p>) : null}
+            <p><strong>Description from ChatGPT:</strong></p>
+            <p>{isLoading ? 'Loading...' : data}</p>
         </Container>
     );
 };
