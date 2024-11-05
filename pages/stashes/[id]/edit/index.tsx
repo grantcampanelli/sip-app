@@ -12,7 +12,6 @@ import { useListState } from "@mantine/hooks";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { IconGripVertical } from "@tabler/icons-react";
 import classes from "/styles/DndTableHandle.module.css";
-import cx from "clsx";
 
 import {
     Container,
