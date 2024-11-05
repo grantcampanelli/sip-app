@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.72",
     "@hello-pangea/dnd": "^16.6.0",
     "@mantine/carousel": "^7.9.2",
     "@mantine/charts": "^7.9.2",
@@ -33,6 +34,7 @@
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
     "@vercel/analytics": "^1.2.2",
+    "ai": "^3.4.33",
     "babel-plugin-superjson-next": "^0.4.5",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
@@ -46,7 +48,8 @@
     "react-dom": "18.2.0",
     "recharts": "^2.12.7",
     "superjson": "^1.13.3",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
