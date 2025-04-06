@@ -325,7 +325,7 @@ const Stashes: React.FC<Props> = (props) => {
                             />
                             
                             <SimpleGrid cols={{ base: 2, sm: 3, md: 5 }} spacing={5}>
-                                {row.shelfItems.slice(0, 5).map((item, index) => (
+                                {row.shelfItems.slice(0, 10).map((item, index) => (
                                     <Link 
                                         key={index} 
                                         href={`/bottles/${item.bottle?.id}`}
@@ -352,8 +352,8 @@ const Stashes: React.FC<Props> = (props) => {
                                         </Paper>
                                     </Link>
                                 ))}
-                                {row.shelfItems.length > 5 && (
-                                    <Badge size="lg">+{row.shelfItems.length - 5} more</Badge>
+                                {row.shelfItems.length > 10 && (
+                                    <Badge size="lg">+{row.shelfItems.length - 10} more</Badge>
                                 )}
                             </SimpleGrid>
                         </Card.Section>
