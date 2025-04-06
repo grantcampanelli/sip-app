@@ -5,8 +5,22 @@ import {GetServerSideProps} from "next";
 import prisma from "lib/prismadb";
 import Link from "next/link";
 import Router from "next/router";
-import {ActionIcon, Card, Divider, Menu, rem, Text} from "@mantine/core";
-
+import {
+    ActionIcon, 
+    Card, 
+    Divider, 
+    Menu, 
+    rem, 
+    Text, 
+    Progress, 
+    SimpleGrid,
+    Badge,
+    Paper,
+    Stack,
+    RingProgress,
+    useMantineTheme,
+    Title
+} from "@mantine/core";
 
 import {
     Container,
@@ -30,7 +44,15 @@ type ShelfWithFullData = Prisma.ShelfGetPayload<{
     include: {
         shelfItems: {
             include: {
-                bottle: true;
+                bottle: {
+                    include: {
+                        product: {
+                            include: {
+                                brand: true;
+                            }
+                        }
+                    }
+                };
             };
         };
     };
@@ -75,7 +97,15 @@ export const getServerSideProps: GetServerSideProps = async ({
             include: {
                 shelfItems: {
                     include: {
-                        bottle: true,
+                        bottle: {
+                            include: {
+                                product: {
+                                    include: {
+                                        brand: true
+                                    }
+                                }
+                            }
+                        },
                     },
                 },
             },
@@ -94,6 +124,7 @@ type Props = {
 
 const Stashes: React.FC<Props> = (props) => {
     const [opened, {open, close}] = useDisclosure(false);
+    const theme = useMantineTheme();
     const form = useForm({
         initialValues: {
             name: "",
@@ -103,6 +134,32 @@ const Stashes: React.FC<Props> = (props) => {
             stashId: "",
         },
     });
+    
+    // Calculate summary statistics
+    const totalCapacity = props.shelves.reduce((sum, shelf) => sum + shelf.capacity, 0);
+    const totalBottles = props.shelves.reduce((sum, shelf) => sum + shelf.shelfItems.length, 0);
+    const occupancyPercentage = totalCapacity > 0 ? (totalBottles / totalCapacity) * 100 : 0;
+    
+    // Group bottles by varietal instead of type
+    const bottlesByVarietal = props.shelves.flatMap(shelf => shelf.shelfItems)
+        .reduce((acc, item) => {
+            const varietal = item.bottle?.product?.varietal || 'Unknown';
+            acc[varietal] = (acc[varietal] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+    
+    const varietals = Object.keys(bottlesByVarietal).sort((a, b) => bottlesByVarietal[b] - bottlesByVarietal[a]);
+    
+    // Group bottles by brand
+    const bottlesByBrand = props.shelves.flatMap(shelf => shelf.shelfItems)
+        .reduce((acc, item) => {
+            const brandName = item.bottle?.product?.brand?.name || 'Unknown';
+            acc[brandName] = (acc[brandName] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+    
+    const brands = Object.keys(bottlesByBrand).sort((a, b) => bottlesByBrand[b] - bottlesByBrand[a]);
+    
     const submitData = async (e: React.SyntheticEvent) => {
         e.preventDefault();
 
@@ -125,8 +182,6 @@ const Stashes: React.FC<Props> = (props) => {
             console.error(error);
         }
     };
-
-
 
     return (
         <Container>
@@ -158,49 +213,153 @@ const Stashes: React.FC<Props> = (props) => {
                 </Group>
             </Group>
 
-            {props.shelves
+            {/* Stash Summary Dashboard */}
+            <Card shadow="sm" padding="lg" radius="md" withBorder mb={20}>
+                <Card.Section withBorder inheritPadding py="xs">
+                    <Title order={3}>Stash Summary</Title>
+                </Card.Section>
+                
+                <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg" my="md">
+                    <Paper withBorder p="md" radius="md">
+                        <Text ta="center" fz="lg" fw={700}>Inventory Status</Text>
+                        <RingProgress
+                            sections={[{ value: occupancyPercentage, color: occupancyPercentage > 80 ? 'red' : 'blue' }]}
+                            label={
+                                <Text ta="center" fz="xl" fw={700}>
+                                    {Math.round(occupancyPercentage)}%
+                                </Text>
+                            }
+                            size={120}
+                            thickness={12}
+                            mx="auto"
+                            my="md"
+                        />
+                        <Text ta="center" c="dimmed" fz="sm">
+                            {totalBottles} of {totalCapacity} bottles
+                        </Text>
+                    </Paper>
+                    
+                    <Paper withBorder p="md" radius="md">
+                        <Text ta="center" fz="lg" fw={700}>Varietals</Text>
+                        <Stack gap="xs" my="md">
+                            {varietals.slice(0, 5).map(varietal => (
+                                <Group key={varietal} justify="space-between">
+                                    <Text>{varietal}</Text>
+                                    <Badge size="lg">{bottlesByVarietal[varietal]}</Badge>
+                                </Group>
+                            ))}
+                            {varietals.length > 5 && (
+                                <Text c="dimmed" ta="center" size="xs">+{varietals.length - 5} more varietals</Text>
+                            )}
+                            {varietals.length === 0 && (
+                                <Text c="dimmed" ta="center">No varietals available</Text>
+                            )}
+                        </Stack>
+                    </Paper>
+                    
+                    <Paper withBorder p="md" radius="md">
+                        <Text ta="center" fz="lg" fw={700}>Top Brands</Text>
+                        <Stack gap="xs" my="md">
+                            {brands.slice(0, 5).map(brand => (
+                                <Group key={brand} justify="space-between">
+                                    <Text>{brand}</Text>
+                                    <Badge size="lg">{bottlesByBrand[brand]}</Badge>
+                                </Group>
+                            ))}
+                            {brands.length > 5 && (
+                                <Text c="dimmed" ta="center" size="xs">+{brands.length - 5} more brands</Text>
+                            )}
+                            {brands.length === 0 && (
+                                <Text c="dimmed" ta="center">No brands available</Text>
+                            )}
+                        </Stack>
+                    </Paper>
+                </SimpleGrid>
+            </Card>
 
-                .map((row) => (
-
-                    <Card
-                        key={row.id}
-                        shadow="sm"
-                        // padding="md"
-                        radius="md"
-                        pt={20}
-                        mt={5}
-                        withBorder>
-                        <Card.Section>
-                            <Link
-                                style={{textDecoration: "none"}}
-                                href={`/shelves/${row.id}`}
+            {/* Enhanced Shelf Cards */}
+            {props.shelves.map((row) => (
+                <Card
+                    key={row.id}
+                    shadow="sm"
+                    radius="md"
+                    pt={20}
+                    mt={5}
+                    withBorder>
+                    <Card.Section withBorder>
+                        <Link
+                            style={{textDecoration: "none"}}
+                            href={`/shelves/${row.id}`}
+                        >
+                            <Text
+                                size="lg"
+                                fw={800}
+                                ta="left"
+                                pl={20}
+                                pr={20}
+                                variant="gradient"
+                                gradient={{from: "red", to: "maroon", deg: 90}}
                             >
-                                <Text
-                                    size="lg"
-                                    fw={800}
-                                    ta="left"
-                                    pl={20}
-                                    pr={20}
-                                    variant="gradient"
-                                    gradient={{from: "red", to: "maroon", deg: 90}}
-
-                                >
-                                    {row.name}
-                                </Text>
-                                <Text
-                                    size="sm"
-                                    fw={800}
-                                    ta="left"
-                                    pl={20}
-                                    pr={20}
-                                    variant="gradient"
-                                    gradient={{from: "red", to: "maroon", deg: 90}}>
-                                    Current Inventory: {row.shelfItems.length}/{row.capacity}
-                                </Text>
-                            </Link>
+                                {row.name}
+                            </Text>
+                            <Text
+                                size="sm"
+                                fw={800}
+                                ta="left"
+                                pl={20}
+                                pr={20}
+                                variant="gradient"
+                                gradient={{from: "red", to: "maroon", deg: 90}}>
+                                Current Inventory: {row.shelfItems.length}/{row.capacity}
+                            </Text>
+                        </Link>
+                    </Card.Section>
+                    
+                    {row.shelfItems.length > 0 && (
+                        <Card.Section p="sm">
+                            <Progress 
+                                value={(row.shelfItems.length / row.capacity) * 100} 
+                                color={row.shelfItems.length / row.capacity > 0.8 ? "red" : "blue"} 
+                                size="lg"
+                                mb="xs"
+                            />
+                            
+                            <SimpleGrid cols={{ base: 2, sm: 3, md: 5 }} spacing={5}>
+                                {row.shelfItems.slice(0, 5).map((item, index) => (
+                                    <Link 
+                                        key={index} 
+                                        href={`/bottles/${item.bottle?.id}`}
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Paper 
+                                            p="xs" 
+                                            withBorder
+                                            styles={(theme) => ({
+                                                root: {
+                                                    cursor: 'pointer',
+                                                    '&:hover': {
+                                                        backgroundColor: theme.colors.gray[1],
+                                                        boxShadow: theme.shadows.sm,
+                                                    }
+                                                }
+                                            })}
+                                        >
+                                            <Text size="xs" fw={500} truncate>
+                                                {item.bottle?.product?.brand?.name 
+                                                    ? `${item.bottle.product.brand.name} ${item.bottle.product.name} ${item.bottle.product.vintage || ''}`.trim()
+                                                    : ('Unnamed bottle')}
+                                            </Text>
+                                        </Paper>
+                                    </Link>
+                                ))}
+                                {row.shelfItems.length > 5 && (
+                                    <Badge size="lg">+{row.shelfItems.length - 5} more</Badge>
+                                )}
+                            </SimpleGrid>
                         </Card.Section>
-                    </Card>
-                ))}
+                    )}
+                </Card>
+            ))}
 
             <Modal opened={opened} onClose={close} title="Create Shelf">
                 <Box maw={340} mx="auto">
@@ -242,3 +401,4 @@ const Stashes: React.FC<Props> = (props) => {
 };
 
 export default Stashes;
+

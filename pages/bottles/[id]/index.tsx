@@ -6,7 +6,7 @@ import prisma from "../../../lib/prismadb";
 import Link from "next/link";
 import Router from "next/router";
 import {modals} from "@mantine/modals";
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 
 import {
@@ -15,7 +15,9 @@ import {
     Text,
     ActionIcon,
     Menu,
-    Title, Button
+    Title, Button,
+    Paper,
+    Loader
 } from "@mantine/core";
 import {
     IconTrash,
@@ -23,7 +25,8 @@ import {
     IconCheckbox,
     IconSquarePlus,
     IconSquareX,
-    IconDotsCircleHorizontal
+    IconDotsCircleHorizontal,
+    IconRobot
 } from '@tabler/icons-react';
 
 type BottleWithFullData = Prisma.BottleGetPayload<{
@@ -257,26 +260,54 @@ const BottlePage: React.FC<Props> = (props) => {
     }
 
     const [data, setData] = useState(null)
-    const [isLoading, setLoading] = useState(true)
+    const [isLoading, setLoading] = useState(false)
+    const [hasRequested, setHasRequested] = useState(false)
 
-    // Set promptText to the bottles name
-    const promptText = `${props.bottle.product.brand.name} ${props.bottle.product.name} ${props.bottle.product.vintage}`
+    // Create an improved prompt that gets better details about the bottle
+    const getImprovedPrompt = () => {
+        const { bottle } = props;
+        const isWine = bottle.product.brand.type === "WINE";
+        
+        let prompt = `Provide a detailed description of ${bottle.product.brand.name} ${bottle.product.name}`;
+        
+        if (isWine && bottle.product.vintage) {
+            prompt += ` ${bottle.product.vintage} vintage`;
+        }
+        
+        prompt += `. Include information about:
+- Flavor profile and tasting notes
+- ${isWine ? 'Winery background and region characteristics' : 'Distillery background and production methods'}
+- Ideal serving suggestions and food pairings
+- ${isWine ? 'Aging potential and peak drinking window' : 'Best way to enjoy this spirit'}
+- What makes this bottle special or unique
+Please format this as a helpful description for a wine collector.`;
+        
+        return prompt;
+    }
 
-    useEffect(() => {
-        fetch('/api/chat',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({promptInput: promptText}),
-            })
-            .then((res) => res.json())
-            .then((data) => {
-                setData(data)
-                setLoading(false)
-            })
-    }, [])
+    // Function to fetch ChatGPT description when button is clicked
+    const fetchBottleDescription = () => {
+        setLoading(true);
+        setHasRequested(true);
+        
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ promptInput: getImprovedPrompt() }),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            setData(data);
+            setLoading(false);
+        })
+        .catch(error => {
+            console.error("Error fetching bottle description:", error);
+            setLoading(false);
+        });
+    }
+
     return (
         <Container>
             <Group justify={"space-between"}>
@@ -327,10 +358,36 @@ const BottlePage: React.FC<Props> = (props) => {
             <p><strong>Notes: </strong>{props.bottle.notes}</p>
             <p><strong>Amount Remaining:</strong> {props.bottle.amountRemaining}%</p>
             {props.bottle.finished ? (<p><strong>Finished Date:</strong> {String(props.bottle.finishDate)}</p>) : null}
-            <p><strong>Description from ChatGPT:</strong></p>
-            <p>{isLoading ? 'Loading...' : data}</p>
+            
+            <Paper withBorder p="md" mt="md">
+                <Group mb="sm">
+                    <Text size="lg" fw={600}>Bottle Description</Text>
+                    {!hasRequested && (
+                        <Button 
+                            leftSection={<IconRobot size={16} />}
+                            onClick={fetchBottleDescription} 
+                            variant="light" 
+                            color="blue"
+                        >
+                            Get AI Description
+                        </Button>
+                    )}
+                </Group>
+                
+                {!hasRequested ? (
+                    <Text color="dimmed">Click the button to get a detailed AI description of this bottle.</Text>
+                ) : isLoading ? (
+                    <Group>
+                        <Loader size="sm" />
+                        <Text>Generating description...</Text>
+                    </Group>
+                ) : (
+                    <Text>{data}</Text>
+                )}
+            </Paper>
         </Container>
     );
 };
 
 export default BottlePage;
+
