@@ -17,7 +17,8 @@ import {
     Menu,
     Title, Button,
     Paper,
-    Loader
+    Loader,
+    Box
 } from "@mantine/core";
 import {
     IconTrash,
@@ -309,83 +310,85 @@ Please format this as a helpful description for a wine collector.`;
     }
 
     return (
-        <Container>
-            <Group justify={"space-between"}>
-                <Title>
-                    {props.bottle.product.brand.name} {props.bottle.product.name} {props.bottle.product.brand.type == "WINE"
-                    ? props.bottle.product.vintage
-                    : null}{" "}
-                </Title>
-                <Group>
-                    <Menu shadow="md" width={200}>
-                        <Menu.Target>
-                            <ActionIcon size={"lg"}>
-                                <IconDotsCircleHorizontal/>
-                            </ActionIcon>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                            {openEditBottle({bottleId: props.bottle.id || ""})}
-                            {props.bottle.shelfItem && !props.bottle.finished ? (
-                                openRemoveFromShelfModal({shelfItemId: props.bottle.shelfItem?.id || ""})
-                            ) : null}
-                            {!props.bottle.shelfItem && !props.bottle.finished ? (
-                                openAddToShelfModal({bottleId: props.bottle.id || ""})
-                            ) : null}
-                            {!props.bottle.shelfItem && !props.bottle.finished ? (
-                                openFinishModal({bottleId: props.bottle.id || ""})
-                            ) : null}
-                            {props.bottle.shelfItem ? null : (openDeleteModal({bottleId: props.bottle.id || ""}))}
-                        </Menu.Dropdown>
-                    </Menu>
-                </Group>
-            </Group>
-
-            <Text>
-                {props.bottle.shelfItem ? (
-                    <p>
-                        <strong>Location:</strong>{" "}
-                        {props.bottle.shelfItem.shelf.stash?.name}
-                        {" | "}
-                        <Link href={`/shelves/${props.bottle.shelfItem.shelf.id}`}>
-                            {props.bottle.shelfItem.shelf.name}
-                        </Link>
-                    </p>
-                ) : null}
-            </Text>
-
-            <p><strong>Purchase Price:</strong> ${props.bottle.purchasePrice}</p>
-            <p><strong>Purchase Date:</strong> {props.bottle.purchaseDate?.toLocaleDateString()}</p>
-            <p><strong>Notes: </strong>{props.bottle.notes}</p>
-            <p><strong>Amount Remaining:</strong> {props.bottle.amountRemaining}%</p>
-            {props.bottle.finished ? (<p><strong>Finished Date:</strong> {String(props.bottle.finishDate)}</p>) : null}
-            
-            <Paper withBorder p="md" mt="md">
-                <Group mb="sm">
-                    <Text size="lg" fw={600}>Bottle Description</Text>
-                    {!hasRequested && (
-                        <Button 
-                            leftSection={<IconRobot size={16} />}
-                            onClick={fetchBottleDescription} 
-                            variant="light" 
-                            color="blue"
-                        >
-                            Get AI Description
-                        </Button>
-                    )}
-                </Group>
-                
-                {!hasRequested ? (
-                    <Text color="dimmed">Click the button to get a detailed AI description of this bottle.</Text>
-                ) : isLoading ? (
+        <Box py="xl">
+            <Container size="lg">
+                <Group justify={"space-between"}>
+                    <Title>
+                        {props.bottle.product.brand.name} {props.bottle.product.name} {props.bottle.product.brand.type == "WINE"
+                        ? props.bottle.product.vintage
+                        : null}{" "}
+                    </Title>
                     <Group>
-                        <Loader size="sm" />
-                        <Text>Generating description...</Text>
+                        <Menu shadow="md" width={200}>
+                            <Menu.Target>
+                                <ActionIcon size={"lg"}>
+                                    <IconDotsCircleHorizontal/>
+                                </ActionIcon>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                {openEditBottle({bottleId: props.bottle.id || ""})}
+                                {props.bottle.shelfItem && !props.bottle.finished ? (
+                                    openRemoveFromShelfModal({shelfItemId: props.bottle.shelfItem?.id || ""})
+                                ) : null}
+                                {!props.bottle.shelfItem && !props.bottle.finished ? (
+                                    openAddToShelfModal({bottleId: props.bottle.id || ""})
+                                ) : null}
+                                {!props.bottle.shelfItem && !props.bottle.finished ? (
+                                    openFinishModal({bottleId: props.bottle.id || ""})
+                                ) : null}
+                                {props.bottle.shelfItem ? null : (openDeleteModal({bottleId: props.bottle.id || ""}))}
+                            </Menu.Dropdown>
+                        </Menu>
                     </Group>
-                ) : (
-                    <Text>{data}</Text>
-                )}
-            </Paper>
-        </Container>
+                </Group>
+
+                <Text>
+                    {props.bottle.shelfItem ? (
+                        <p>
+                            <strong>Location:</strong>{" "}
+                            {props.bottle.shelfItem.shelf.stash?.name}
+                            {" | "}
+                            <Link href={`/shelves/${props.bottle.shelfItem.shelf.id}`}>
+                                {props.bottle.shelfItem.shelf.name}
+                            </Link>
+                        </p>
+                    ) : null}
+                </Text>
+
+                <p><strong>Purchase Price:</strong> ${props.bottle.purchasePrice}</p>
+                <p><strong>Purchase Date:</strong> {props.bottle.purchaseDate?.toLocaleDateString()}</p>
+                <p><strong>Notes: </strong>{props.bottle.notes}</p>
+                <p><strong>Amount Remaining:</strong> {props.bottle.amountRemaining}%</p>
+                {props.bottle.finished ? (<p><strong>Finished Date:</strong> {String(props.bottle.finishDate)}</p>) : null}
+                
+                <Paper withBorder p="md" mt="md">
+                    <Group mb="sm">
+                        <Text size="lg" fw={600}>Bottle Description</Text>
+                        {!hasRequested && (
+                            <Button 
+                                leftSection={<IconRobot size={16} />}
+                                onClick={fetchBottleDescription} 
+                                variant="light" 
+                                color="blue"
+                            >
+                                Get AI Description
+                            </Button>
+                        )}
+                    </Group>
+                    
+                    {!hasRequested ? (
+                        <Text color="dimmed">Click the button to get a detailed AI description of this bottle.</Text>
+                    ) : isLoading ? (
+                        <Group>
+                            <Loader size="sm" />
+                            <Text>Generating description...</Text>
+                        </Group>
+                    ) : (
+                        <Text>{data}</Text>
+                    )}
+                </Paper>
+            </Container>
+        </Box>
     );
 };
 
