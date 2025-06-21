@@ -7,7 +7,8 @@ import {
   Drawer,
   ScrollArea,
   rem,
-  useMantineTheme, Center, Loader,
+  ActionIcon,
+  Container,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "../styles/HeaderMenu.module.css";
@@ -15,25 +16,22 @@ import React from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { IconLogout } from "@tabler/icons-react";
 
 const SignedIn = () => {
   const {data: session, status: loading} = useSession();
 
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
-  const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
-  // const theme = useMantineTheme();
 
   if(loading === 'loading') {
-    return (
-   <></>
-    )}
+    return <></>;
+  }
 
   if (session) {
     return (
       <>
         <Group h="100%" gap={0} visibleFrom="sm">
-
           <Link href="/bottles" className={classes.link}>
             My Bottles
           </Link>
@@ -46,10 +44,24 @@ const SignedIn = () => {
           <Link href="/account" className={classes.link}>
             Account
           </Link>
-          {/*<Button onClick={() => signOut()}>Log Out</Button>*/}
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            size="md"
+            onClick={() => signOut()}
+            aria-label="Log out"
+            ml="sm"
+          >
+            <IconLogout size={16} />
+          </ActionIcon>
         </Group>
 
-        <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+        <Burger 
+          opened={drawerOpened} 
+          onClick={toggleDrawer} 
+          hiddenFrom="sm"
+          size="sm"
+        />
 
         <Drawer
           opened={drawerOpened}
@@ -91,45 +103,55 @@ const SignedIn = () => {
             >
               Account
             </Link>
-            {/*<Divider my="sm" />*/}
-            {/*<Button fullWidth onClick={() => signOut()}>*/}
-            {/*  Log Out*/}
-            {/*</Button>*/}
+            
+            <Divider my="sm" />
+            
+            <Button 
+              fullWidth 
+              variant="light" 
+              color="red"
+              leftSection={<IconLogout size={16} />}
+              onClick={() => signOut()}
+            >
+              Log Out
+            </Button>
           </ScrollArea>
         </Drawer>
       </>
     );
   } else {
     return (
-      <>
-        <Group>
-          <Button onClick={() => signIn()}>Log in</Button>
-        </Group>
-      </>
+      <Group>
+        <Button 
+          variant="filled"
+          onClick={() => signIn()}
+          size="sm"
+        >
+          Log in
+        </Button>
+      </Group>
     );
   }
 };
 
 const Header = () => {
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
-    useDisclosure(false);
-  const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
-  const theme = useMantineTheme();
-
   return (
-    <Box pb={10}>
+    <Box className={classes.headerWrapper}>
       <header className={classes.header}>
-        <Group justify="space-between" h="100%" pl="20px" pt="20px">
-          <Link href="/">
-            <Image
-              src="/SipLogoNoBg.png"
-              width={100}
-              height={100}
-              alt="Sippin Logo"
-            />
-          </Link>
-          <SignedIn />
-        </Group>
+        <Container size="xl" h="100%">
+          <Group justify="space-between" h="100%">
+            <Link href="/" className={classes.logo}>
+              <Image
+                src="/SipLogoNoBg.png"
+                width={70}
+                height={70}
+                alt="Sippin Logo"
+                priority
+              />
+            </Link>
+            <SignedIn />
+          </Group>
+        </Container>
       </header>
     </Box>
   );
