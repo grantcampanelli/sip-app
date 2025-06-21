@@ -62,7 +62,12 @@ type Props = {
 };
 
 const CreateBottleForm: React.FC<Props> = (props) => {
-    const [productsFiltered, setProductsFiltered] = useState(props.productComboBox);
+    const [productsFiltered, setProductsFiltered] = useState<Array<{value: string, label: string}>>(props.productComboBox as Array<{value: string, label: string}>);
+    const [brandsList, setBrandsList] = useState<Array<{value: string, label: string}>>(props.brandComboBox as Array<{value: string, label: string}>);
+    const [brandSearchValue, setBrandSearchValue] = useState('');
+    const [isCreatingBrand, setIsCreatingBrand] = useState(false);
+    const [productSearchValue, setProductSearchValue] = useState('');
+    const [isCreatingProduct, setIsCreatingProduct] = useState(false);
 
     const [active, setActive] = useState(0);
     const form = useForm({
@@ -164,22 +169,95 @@ const CreateBottleForm: React.FC<Props> = (props) => {
     });
 
     const saveNewBrand = async () => {
+        setIsCreatingBrand(true);
         try {
             const body = {
                 name: newBrandForm.values.brandName,
                 type: newBrandForm.values.type,
             };
-            await fetch("/api/brands", {
+            const response = await fetch("/api/brands", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body),
             });
-            Router.reload();
-            close();
+            
+            if (response.ok) {
+                const newBrand = await response.json();
+                
+                // Add the new brand to the brands list
+                const newBrandOption = { value: newBrand.id, label: newBrand.name };
+                setBrandsList([...brandsList, newBrandOption]);
+                
+                // Set the newly created brand as selected
+                form.setValues({ brand: newBrand.id });
+                
+                // Reset the brand search value
+                setBrandSearchValue('');
+                
+                // Reset the form
+                newBrandForm.reset();
+                close();
+            } else {
+                console.error('Failed to create brand');
+            }
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsCreatingBrand(false);
         }
     }
+
+    const handleBrandSearchChange = (value: string) => {
+        setBrandSearchValue(value);
+        
+        // Check if the search value doesn't match any existing brands
+        const brandExists = brandsList.some(brand => 
+            brand.label.toLowerCase().includes(value.toLowerCase())
+        );
+        
+        // If brand doesn't exist and user has typed something, pre-fill the modal
+        if (!brandExists && value.trim()) {
+            newBrandForm.setValues({ brandName: value });
+        }
+    };
+
+    const getBrandSelectData = () => {
+        if (brandSearchValue.trim() && !brandsList.some(brand => 
+            brand.label.toLowerCase().includes(brandSearchValue.toLowerCase())
+        )) {
+            return [
+                ...brandsList,
+                { value: 'create-new', label: `Create "${brandSearchValue}"` }
+            ];
+        }
+        return brandsList;
+    };
+
+    const handleBrandSelect = (value: string) => {
+        if (value === 'create-new') {
+            openBrandModal();
+        } else {
+            form.setValues({ brand: value });
+        }
+    };
+
+    // Override the form's brand onChange to handle "create new" option
+    const originalBrandOnChange = form.getInputProps("brand").onChange;
+    const handleBrandChange = (value: string | null) => {
+        if (value === 'create-new') {
+            openBrandModal();
+        } else if (value) {
+            originalBrandOnChange?.(value);
+        }
+    };
+
+    const openBrandModal = () => {
+        // Pre-fill with current search value if it exists
+        if (brandSearchValue.trim()) {
+            newBrandForm.setValues({ brandName: brandSearchValue });
+        }
+        open();
+    };
 
     const newBrandModal = () => {
         return (
@@ -204,8 +282,8 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                     ]}
                     {...newBrandForm.getInputProps("type")}
                 />
-                <Button fullWidth onClick={() => saveNewBrand()} mt="md">
-                    Submit
+                <Button fullWidth onClick={() => saveNewBrand()} mt="md" loading={isCreatingBrand}>
+                    {isCreatingBrand ? 'Creating...' : 'Submit'}
                 </Button>
             </>
         );
@@ -221,6 +299,7 @@ const CreateBottleForm: React.FC<Props> = (props) => {
     });
 
     const saveNewProduct = async () => {
+        setIsCreatingProduct(true);
         try {
             const body = {
                 name: newProductForm.values.productName,
@@ -229,17 +308,103 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                 region: newProductForm.values.productRegion,
                 brandId: form.values.brand,
             };
-            await fetch("/api/products", {
+            const response = await fetch("/api/products", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body),
             });
-            Router.reload();
-            close();
+            
+            if (response.ok) {
+                const newProduct = await response.json();
+                
+                // Add the new product to the filtered products list
+                const newProductOption = { 
+                    value: newProduct.id, 
+                    label: newProduct.name + " " + newProductForm.values.productVintage 
+                };
+                setProductsFiltered([...productsFiltered, newProductOption]);
+                
+                // Set the newly created product as selected
+                form.setValues({ product: newProduct.id });
+                
+                // Reset the product search value
+                setProductSearchValue('');
+                
+                // Reset the form
+                newProductForm.reset();
+                close();
+            } else {
+                console.error('Failed to create product');
+            }
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsCreatingProduct(false);
         }
     }
+
+    const handleProductSearchChange = (value: string) => {
+        setProductSearchValue(value);
+        
+        // Check if the search value doesn't match any existing products
+        const productExists = productsFiltered.some(product => 
+            product.label.toLowerCase().includes(value.toLowerCase())
+        );
+        
+        // If product doesn't exist and user has typed something, pre-fill the modal
+        if (!productExists && value.trim()) {
+            newProductForm.setValues({ productName: value });
+        }
+    };
+
+    const getProductSelectData = () => {
+        if (productSearchValue.trim() && !productsFiltered.some(product => 
+            product.label.toLowerCase().includes(productSearchValue.toLowerCase())
+        )) {
+            return [
+                ...productsFiltered,
+                { value: 'create-new', label: `Create "${productSearchValue}"` }
+            ];
+        }
+        return productsFiltered;
+    };
+
+    // Override the form's product onChange to handle "create new" option
+    const originalProductOnChange = form.getInputProps("product").onChange;
+    const handleProductChange = (value: string | null) => {
+        if (value === 'create-new') {
+            openProductModal();
+        } else if (value) {
+            originalProductOnChange?.(value);
+        }
+    };
+
+    const openProductModal = () => {
+        // Pre-fill with current search value if it exists
+        if (productSearchValue.trim()) {
+            newProductForm.setValues({ productName: productSearchValue });
+        }
+        open();
+    };
+
+    const handleCloseModal = () => {
+        newBrandForm.reset();
+        newProductForm.reset();
+        setBrandSearchValue('');
+        setProductSearchValue('');
+        close();
+    };
+
+    // Code to step through the UI Stepper
+    const nextStep = () =>
+        setActive((current) => {
+            if (form.validate().hasErrors) {
+                return current;
+            }
+            return current < 3 ? current + 1 : current;
+        });
+
+    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
     // create a new product modal
     const newProductModal = () => {
@@ -271,23 +436,12 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                     placeholder="Napa Valley"
                     {...newProductForm.getInputProps("productRegion")}
                 />
-                <Button fullWidth onClick={() => saveNewProduct()} mt="md">
-                    Submit
+                <Button fullWidth onClick={() => saveNewProduct()} mt="md" loading={isCreatingProduct}>
+                    {isCreatingProduct ? 'Creating...' : 'Submit'}
                 </Button>
             </>
         );
     };
-
-    // Code to step through the UI Stepper
-    const nextStep = () =>
-        setActive((current) => {
-            if (form.validate().hasErrors) {
-                return current;
-            }
-            return current < 3 ? current + 1 : current;
-        });
-
-    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
     return (
         <>
@@ -300,9 +454,13 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                             withAsterisk
                             placeholder="Start typing..."
                             limit={10}
-                            data={props.brandComboBox}
+                            data={getBrandSelectData()}
                             searchable
-                            {...form.getInputProps("brand")}
+                            searchValue={brandSearchValue}
+                            onSearchChange={handleBrandSearchChange}
+                            onChange={handleBrandChange}
+                            value={form.values.brand}
+                            error={form.errors.brand}
                         />
 
                     </Stepper.Step>
@@ -314,9 +472,13 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                             withAsterisk
                             placeholder="Start typing..."
                             limit={5}
-                            data={productsFiltered}
+                            data={getProductSelectData()}
                             searchable
-                            {...form.getInputProps("product")}
+                            searchValue={productSearchValue}
+                            onSearchChange={handleProductSearchChange}
+                            onChange={handleProductChange}
+                            value={form.values.product}
+                            error={form.errors.product}
                         />
                     </Stepper.Step>
 
@@ -361,13 +523,13 @@ const CreateBottleForm: React.FC<Props> = (props) => {
                         </Button>
                     )}
 
-                    {active === 0 && <Button color="green" onClick={open}><IconPlus/>Brand</Button>}
-                    {active === 1 && <Button color="green" onClick={open}><IconPlus/>Product</Button>}
+                    {active === 0 && <Button color="green" onClick={openBrandModal}><IconPlus/>Brand</Button>}
+                    {active === 1 && <Button color="green" onClick={openProductModal}><IconPlus/>Product</Button>}
                     {active !== 2 && <Button onClick={nextStep}>Next step</Button>}
                     {active === 2 && <Button onClick={addBottle}>Add Bottle</Button>}
                 </Group>
 
-                <Modal opened={opened} onClose={close} title={active === 0 ? "Add New Brand" : "Add New Product"}>
+                <Modal opened={opened} onClose={handleCloseModal} title={active === 0 ? "Add New Brand" : "Add New Product"}>
                     {active === 0 ? newBrandModal() : null}
                     {active === 1 ? newProductModal() : null}
                 </Modal>

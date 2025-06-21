@@ -17,7 +17,7 @@ export default async function handle(
 }
 
 async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
-  const { name, vintage, varietal, brandId } = req.body;
+  const { name, vintage, varietal, region, brandId } = req.body;
 
   const session = await getServerSession(req, res, authOptions);
   const userId = session?.user?.id;
@@ -31,11 +31,13 @@ async function handlePOST(res: NextApiResponse, req: NextApiRequest) {
       name: name,
       vintage: vintage,
       varietal: varietal,
+      region: region,
       brandId: brandId,
     },
     select: {
       id: true,
       name: true,
+      vintage: true,
     },
   });
   res.json(result);
